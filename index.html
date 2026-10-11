@@ -88,9 +88,14 @@ button{font-family:inherit;color:inherit;cursor:pointer}
 /* 日本語の改行：文節の切れ目で折り返し（対応ブラウザ）、行頭に句読点を置かない、最後の行が1〜2文字だけにならないよう整える */
 body{word-break:auto-phrase;line-break:strict;text-wrap:pretty}
 #hint,.banner,.card .ds,.cpath .pu,.keynote,.uh,.potstep .msg,.res-sub,.rdesc,.howto h3{text-wrap:balance}
-@media (max-width:440px){ #pause .foot{gap:6px} #pause .foot .btn{padding-left:12px;padding-right:12px;min-width:0} }
+@media (max-width:440px){ #pause .foot{gap:6px} }
 /* スマホではキー設定を出さない */
 body[data-input=touch] .kbonly{display:none!important}
+/* スマホ（指）だけの改行・文字。PCでは1行のまま */
+br.sp,.sponly{display:none}
+body[data-input=touch] br.sp{display:inline}
+body[data-input=touch] .sponly{display:inline}
+body[data-input=touch] .pconly{display:none}
 /* スマホ：錬金のボタンは下の中央（高さは同じ） */
 #returnbtn{pointer-events:auto;position:absolute;right:calc(10px + var(--safe-r));top:calc(62px + var(--safe-t));padding:8px 12px;min-height:40px;background:#2a2010;border:2px solid var(--gold);color:var(--gold);font-size:15px;box-shadow:0 3px 0 #000}
 #edgeinds{position:absolute;inset:0;pointer-events:none}
@@ -179,9 +184,18 @@ body[data-input=touch] .kbonly{display:none!important}
 .btn:disabled{opacity:.4;pointer-events:none}
 .row{display:flex;gap:10px;align-items:center}
 .foot{padding:12px 16px;border-top:2px solid #000;box-shadow:0 -1px 0 var(--line) inset;display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+/* 同じ画面は中身で大きさが変わらない：高さを決めておく・下のボタンは同じ幅の升目 */
+.panel.fixh{height:min(100%,640px)}
+.panel>.scroll{flex:1 1 auto;min-height:0}
+.foot.ufoot{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr)}
+.foot.ufoot .btn{min-width:0;height:46px;padding:0 6px;line-height:1.15;overflow:hidden}
+.foot.ufoot .btn.armed{font-size:12px}
+@media (max-width:440px){ .foot.ufoot{grid-auto-flow:row;grid-template-columns:1fr 1fr} .foot.ufoot .btn{height:42px} }
 
 /* タイトル */
 #title{background:radial-gradient(ellipse at 50% 35%,rgba(20,40,28,.35),rgba(5,4,8,.9) 75%);flex-direction:column;justify-content:flex-start;overflow-y:auto}
+#tver{position:fixed;right:calc(8px + var(--safe-r));bottom:calc(6px + var(--safe-b));font-size:10px;color:var(--mute);letter-spacing:.05em;pointer-events:none;user-select:none;z-index:1}
+#title.hidden ~ #tver{display:none}
 .logo{text-align:center;margin:clamp(8px,4vh,40px) 0 clamp(8px,2vh,18px)}
 .logo h1{margin:0;font-weight:normal;font-size:clamp(30px,8.6vw,72px);letter-spacing:.06em;white-space:nowrap;color:#d9ffe6;text-shadow:0 0 18px rgba(80,255,150,.55),3px 3px 0 #0a1a10,6px 6px 0 #000}
 .logo div{font-size:clamp(11px,3vw,14px);letter-spacing:.6em;color:var(--green2);margin-top:4px}
@@ -214,13 +228,19 @@ body[data-input=touch] .kbonly{display:none!important}
 .cdetail .clore{font-size:10.5px;color:var(--mute);margin-top:4px;font-style:italic}
 .cdetail.lock .cbody{opacity:.75}
 .char.lock .nm{color:var(--mute)}
-.stages{display:flex;gap:8px}
-.stage{flex:1;background:var(--panel);border:2px solid #000;box-shadow:0 0 0 1px var(--line);padding:10px;text-align:left}
+.stages{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:8px}
+.stage{min-width:0;background:var(--panel);border:2px solid #000;box-shadow:0 0 0 1px var(--line);padding:10px;text-align:left}
 .stage.sel{box-shadow:0 0 0 2px var(--green)}
 .stage .nm{font-size:15px} .stage .ds{font-size:11px;color:var(--dim);margin-top:3px}
 .stage.lock{opacity:.45}
+.stk{display:grid}.stk>*{grid-area:1/1}.stk>:not(.on){visibility:hidden}
 .tmenu{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px}
 .tmenu .btn{min-width:120px}
+.tmenu.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;justify-content:center;width:min(720px,100%);margin-left:auto;margin-right:auto}
+.tmenu.tgrid .btn{min-width:0;width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:6px;padding-right:6px}
+.cdetails{display:grid}
+.cdetails>.cdetail{grid-area:1/1}
+.cdetails>.cdetail:not(.on){visibility:hidden;pointer-events:none}
 #startbtn{font-size:20px;padding:12px 40px;letter-spacing:4px}
 .crys{color:#9ae8ff}
 .small{font-size:11px;color:var(--dim)}
@@ -232,6 +252,7 @@ body[data-input=touch] .kbonly{display:none!important}
   .stage{padding:6px 10px} .stage .ds{font-size:10px}
   #startbtn{padding:8px 34px;font-size:18px}
   .tmenu .btn{min-width:100px;padding:7px 12px;font-size:13px}
+  .tmenu.tgrid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
   .res-title{font-size:22px;padding:8px 10px 0} .res-sub{margin-bottom:6px}
 }
 
@@ -478,6 +499,10 @@ body[data-input=touch] .kbonly{display:none!important}
 .urow .ds{font-size:11px;color:var(--dim);margin-top:2px}
 .urow .leadlist,.tippop .leadlist{font-size:10.5px;line-height:1.5;margin-top:3px}
 .leadlist>div{padding-left:1em;text-indent:-1em;text-wrap:pretty}
+.leadlist .ln{display:inline-block;min-width:4em;text-indent:0}
+.howto .hlist{display:block}
+.howto .hlist>span{display:block;padding-left:1em;text-indent:-1em}
+.howto .hl{display:inline-block;min-width:5.2em;text-indent:0}
 .urow .leadlist .pon,.tippop .leadlist .pon{color:#7fd8d2}
 .urow .leadlist .pnx{color:var(--bone)}
 .urow .leadlist .poff,.tippop .leadlist .poff{color:var(--mute)}
@@ -492,13 +517,15 @@ body[data-input=touch] .kbonly{display:none!important}
 .urow .pips i.on{background:#9ae8ff}
 .urow .btn{margin-left:auto;min-width:96px;font-size:13px;padding:8px 10px}
 .tabs{display:flex;gap:0;border-bottom:2px solid #000}
-.tabs button{flex:1;background:transparent;border:0;padding:10px;font-size:14px;color:var(--dim);border-bottom:2px solid transparent}
+.tabs button{flex:1 1 0;min-width:0;background:transparent;border:0;padding:10px;font-size:14px;color:var(--dim);border-bottom:2px solid transparent}
 .tabs button.on{color:var(--bone);border-bottom-color:var(--green)}
 .bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;padding:12px}
 .bcell{background:#0f0c14;border:1px solid var(--line);padding:8px;display:flex;gap:8px;align-items:center}
 .bcell .ic{width:54px;height:54px;flex:0 0 54px;display:flex;align-items:center;justify-content:center;background:#08060c}
 .bcell .ic canvas{image-rendering:pixelated;max-width:54px;max-height:54px}
 .bcell .nm{font-size:13px}
+.bcell>div:last-child{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
+.bcell .bdesc{margin-top:1.1em}
 .bcell .ds{font-size:10px;color:var(--dim);line-height:1.35;margin-top:2px}
 .bcell.unk .nm{color:var(--mute)} .bcell.unk canvas{filter:brightness(0) opacity(.45)}
 .apips{font-size:9px;color:var(--dim);margin:2px 0;display:flex;flex-wrap:wrap;gap:2px;align-items:center}
@@ -511,8 +538,12 @@ body[data-input=touch] .kbonly{display:none!important}
 .gloss th{text-align:left;color:var(--gold);font-weight:normal;white-space:nowrap;padding:5px 10px 5px 0;vertical-align:top;border-bottom:1px solid #221c2a}
 .gloss td{padding:5px 0;border-bottom:1px solid #221c2a;color:#d8d0e0}
 #howto .tabs button{font-size:13px}
+#howto .panel{overflow:hidden}
+#howto .howto.swl{animation:howsw-l .18s ease-out} #howto .howto.swr{animation:howsw-r .18s ease-out}
+@keyframes howsw-l{from{transform:translateX(28px);opacity:.3}to{transform:none;opacity:1}}
+@keyframes howsw-r{from{transform:translateX(-28px);opacity:.3}to{transform:none;opacity:1}}
 .toggle{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid #221c2a;font-size:14px}
-.toggle .btn{min-width:80px;padding:6px 10px;font-size:13px}
+.toggle .btn{width:96px;min-width:0;flex:0 0 auto;white-space:nowrap;padding:6px 10px;font-size:13px}
 #loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:14px;background:var(--bg)}
 #err{position:fixed;left:8px;right:8px;bottom:8px;background:#300;color:#fbb;font-size:12px;padding:8px;white-space:pre-wrap;display:none;z-index:99}
 
@@ -6437,7 +6468,7 @@ const TU_LV_BASE = {
   blood: [0.08, 0.11, 0.15, 0.2, 0.26, 0.33, 0.41, 0.5],
   harmony: [null, 0.07, 0.1, 0.12, 0.14, 0.16, 0.18, 0.2],
   kinship: [null, 0.07, 0.1, 0.13, 0.16, 0.19, 0.22, 0.25],
-  swift: [0.2, 0.4, 0.6, 0.8, 1],
+  swift: [0.1, 0.2, 0.3, 0.4, 0.5],
   wisdom: [0.1, 0.2, 0.3, 0.4, 0.5],
   mantle: [0.1, 0.2, 0.3, 0.4, 0.5],
   // 系統の極み（v47）：威力は最大Lvで100%（範囲の敵にも同じダメージ）。範囲も Lvで広がる
@@ -6504,7 +6535,7 @@ const SKILLS = {
   linbu:    { cat: 'lin', name: '武の誉れ', desc: (e) => `武系の攻撃 +${P100(LV('linbu', e))}%` },
   linsha:   { cat: 'lin', name: '射の冴え', desc: (e) => `射系の攻撃と射程 +${P100(LV('linsha', e))}%` },
   linjutsu: { cat: 'lin', name: '術の深淵', desc: (e) => `術系の攻撃と範囲 +${P100(LV('linjutsu', e))}%` },
-  blood:    { cat: 'lin', name: '血統の覚醒', desc: (e) => `軍勢で一番多い系統の死者の攻撃と守り +${P100(LV('blood', e))}%` },
+  blood:    { cat: 'lin', name: '血統の覚醒', desc: (e) => `軍勢で一番多い系統の攻撃と守り +${P100(LV('blood', e))}%` },
   kinship:  { cat: 'lin', name: '同族の絆', desc: (e) => `軍勢に同じ系統の死者が多いほど、その系統の攻撃が上がる（${TU.kinship_n}体で最大 +${P100(LV('kinship', e))}%）` },
   harmony:  { cat: 'lin', name: '三系の調和', desc: (e) => `軍勢に武・射・術がそろうほど、全員の攻撃と守り +（最大 +${P100(LV('harmony', e))}%）` },
   apex:     { cat: 'lin', name: '系統の極み', desc: (e) => `武・射・術の攻撃が範囲攻撃になる（範囲の敵にも ${P100(LV('apex', e))}%）` },
@@ -6563,7 +6594,7 @@ const LEAD_MAX = 5;
 const LEAD_BASE = 1;       // 祭壇で上げなくても最初から「陣形」（烏合のままだと兵がばらばらに動いて弱すぎる）
 const LEADERSHIP = [
   { name: '烏合', need: 0, desc: '各自が勝手に一番近い敵へ向かう' },
-  { name: '陣形', need: 2, desc: 'あなたの周りに陣を組む。近接は前、射手と術師は後ろ' },
+  { name: '陣形', need: 2, desc: 'あなたの周りに陣を組む。<br class="sp">近接は前、射手と術師は後ろ' },
   { name: '護衛', need: 5, desc: 'あなたに迫る敵を、近くの兵が討ちに来る' },
   { name: '将狙い', need: 9, desc: 'ボスが来ると、合成体と兵の一部がボスを狙う' },
   { name: '連携', need: 14, desc: '無駄撃ちを減らし、敵の射手や司祭を先に狙う' },
@@ -6640,7 +6671,7 @@ const ALTAR_BASE = {
   body:   { eff: [0.20, 0.40, 0.60, 0.80, 1.00], cost: [30, 60, 100, 160, 240], pc: true },
   banner: { eff: [0.10, 0.20, 0.30, 0.40, 0.50], cost: [30, 60, 100, 160, 240], pc: true },
   thirst: { eff: [0.05, 0.10, 0.15, 0.20, 0.25], cost: [30, 60, 100, 160, 240], pc: true },
-  feet:   { eff: [0.10, 0.20, 0.30, 0.40, 0.50], cost: [30, 60, 100, 160, 240], pc: true },
+  feet:   { eff: [0.05, 0.10, 0.15, 0.20, 0.25], cost: [30, 60, 100, 160, 240], pc: true },
   lead:   { eff: null, cost: [60, 120, 200, 300] },
   reroll: { eff: [1, 3, 5], cost: [80, 160, 260] },
 };
@@ -6673,10 +6704,10 @@ const UPGRADE_COST = [30, 60, 100, 160, 240];   // なくした強化「墓所�
 // ステージ
 const STAGES = {
   // final：最後の敵（hero＝勇者を倒せばクリア／god＝勇者のあと神が降り、その屍を死神にすればクリア）
-  field: { name: '古戦場', desc: '魔王軍と討伐隊が刃を交えた荒野。最後に勇者が現れる。', gradeMul: 1.0, spawnMul: 1.0, final: 'hero',
+  field: { name: '古戦場', desc: '魔王軍と討伐隊が刃を交えた荒野。<br class="sp">最後に勇者が現れる。', gradeMul: 1.0, spawnMul: 1.0, final: 'hero',
     clearText: '勇者を倒す',
     ground: ['#2a3324', '#2f3a28', '#27301f', '#343a2a'], dirt: '#3d3426', unlock: null },
-  holy: { name: '聖都の城壁', desc: '教会の本拠地。教会の兵が多く、討伐隊も強い。勇者のあとに神が降りる。', gradeMul: 1.18, spawnMul: 1.18, final: 'god',
+  holy: { name: '聖都の城壁', desc: '教会の本拠地。教会の兵が多く、討伐隊も強い。<br>勇者のあとに神が降りる。', gradeMul: 1.18, spawnMul: 1.18, final: 'god',
     clearText: '神の屍を死神にして従える',
     // 教会側（司祭・火葬兵・聖騎士・騎士）が序盤から多い出現表
     spawnTable: [
@@ -6719,6 +6750,9 @@ function expectedLevel(tMin) {
   return 25 + 2.4 * (tMin - 10);
 }
 
+// バージョン（タイトル画面の右下に小さく出す）。公開するたびに上げる
+// 形：大.中.小（大＝大きな作り直し、中＝新しい要素・調整、小＝不具合の直しだけ）
+const GAME_VERSION = '0.65.0';
 const TEXT = {
   title: 'ネクロ・アルケミア',
   sub: 'NECRO ALCHEMIA',
@@ -7961,7 +7995,8 @@ function generateWorld() {
     if (r() < 0.55) addProp('spears', x + r.range(-24, 24), y + r.range(-18, 18), false);
     for (let k = 0; k < n; k++) {
       const type = r.pick(tier.list);
-      const g = r.int(tier.g[0], tier.g[1]);
+      // いちばん内側（スタートのすぐ外）は Lv1 を多めに（Lv1 で蘇らせられる死体を切らさない）
+      const g = tier.d === 0 ? (r() < 0.75 ? 1 : 2) : r.int(tier.g[0], tier.g[1]);
       // 一部はすでに骨になっている
       if (r() < 0.25 && tier.d >= 320) {
         addCorpse({ x: x + r.range(-26, 26), y: y + r.range(-20, 20), kind: 'skel', lin: ETYPES[type].lin, raiseForm: 'skeleton', g, type });
@@ -7977,7 +8012,7 @@ function generateWorld() {
     addProp('banner0', cx + 10, cy - 14, false);
   }
   // スタート地点に近い小さな戦場（レベル1でもすぐ起こせる新兵の亡骸。倒れた兵の補充用）
-  const nNear = 11;
+  const nNear = 14;
   const na0 = r() * TAU;
   for (let i = 0; i < nNear; i++) {
     const a = na0 + i * TAU / nNear + r.range(-0.22, 0.22);
@@ -7989,7 +8024,7 @@ function generateWorld() {
     for (let k = 0; k < n; k++) {
       const type = r.pick(['militia', 'militia', 'soldier', 'archer']);
       const q = r();
-      const g = q < 0.6 ? 1 : q < 0.9 ? 2 : 3;
+      const g = q < 0.85 ? 1 : 2;   // ほとんど Lv1（Lv2 が混ざるのは少しだけ）
       // 序盤の補充用。中盤には朽ちて土に還る（後半に弱い兵で軍勢が埋まらないように）
       const dk = r.range(360, 540);
       addCorpse({ x: x + r.range(-22, 22), y: y + r.range(-16, 16), kind: 'h', type, look: 'e', raiseForm: 'risen', lin: ETYPES[type].lin, g, decay: dk, decayMax: dk, seed: true });
@@ -12528,7 +12563,12 @@ const UI = {
   hudT: 0, selChar: 'gravekeeper', selStage: 'field', potSel: new Map(), potGroups: [], lvLock: 0, hints: {}, hintT: 0,
 };
 
-function showScreen(id, on) { $(id).classList.toggle('hidden', !on); }
+function showScreen(id, on) {
+  $(id).classList.toggle('hidden', !on);
+  // バージョン表記はタイトルだけの時に出す（祭壇・記録・遊び方などを重ねて開いている間は隠す）
+  const tv = $('tver');
+  if (tv) tv.classList.toggle('hidden', ['levelup', 'pot', 'roster', 'pause', 'result', 'altar', 'book', 'howto', 'recipe', 'keys', 'tune'].some((k) => $(k) && !$(k).classList.contains('hidden')));
+}
 function anyOverlay() { return ['title', 'levelup', 'pot', 'roster', 'pause', 'result', 'altar', 'book', 'howto', 'recipe'].some((id) => !$(id).classList.contains('hidden')); }
 
 UI.init = function () {
@@ -12544,7 +12584,7 @@ UI.init = function () {
     INPUT.follow = e.pointerType === 'mouse' && inputMode() !== 'touch';
     if (INPUT.follow) {
       INPUT.cx = e.clientX; INPUT.cy = e.clientY;
-      joy.classList.remove('hidden');
+      joy.classList.add('hidden');   // マウスはカーソルが見えているので、操作の輪は出さない（キャラに重なって見づらくなる）
       UI.followTick();
       try { touch.setPointerCapture(e.pointerId); } catch (er) { /* なし */ }
       e.preventDefault();
@@ -12639,9 +12679,6 @@ UI.followTick = function () {
   const nx = dd > 0 ? dx / dd : 0, ny = dd > 0 ? dy / dd : 0;
   if (dd < dead) { INPUT.jx = 0; INPUT.jy = 0; }
   else { const m = clamp((dd - dead) / (MAXR - dead), 0.35, 1); INPUT.jx = nx * m; INPUT.jy = ny * m; }
-  const joy = $('joy'), knob = $('joyk'), kk = Math.min(1, dd / MAXR);
-  joy.style.left = ox + 'px'; joy.style.top = oy + 'px';
-  knob.style.transform = `translate(${nx * kk * MAXR}px,${ny * kk * MAXR}px)`;
 };
 UI.releaseJoy = function () {
   INPUT.active = false; INPUT.pid = null; INPUT.jx = 0; INPUT.jy = 0; INPUT.follow = false;
@@ -12687,7 +12724,7 @@ function charDetailEl(ck) {
     row('初期術式', 'cstartrow', w); }
   // 得意な道
   { const P = PATHS[c.path], bonus = c.path === 'lin' ? CHAR_PATH_BONUS.ptsLin : CHAR_PATH_BONUS.pts;
-    row('得意な道', 'cpath', `<b style="color:${CAT[c.path].color}">${P.name}</b><div class="cv">道の Lv計 +${bonus}（位階に早く届く）・この道の術式が候補に出やすい</div>`); }
+    row('得意な道', 'cpath', `<b style="color:${CAT[c.path].color}">${P.name}</b><div class="cv">道の Lv計 +${bonus}<br>この道の術式が候補に出やすい</div>`); }
   if (unlocked && c.lore) box.appendChild(el('div', 'clore', c.lore));
   return box;
 }
@@ -12722,7 +12759,10 @@ UI.renderTitle = function () {
     chars.appendChild(card);
   }
   cb.appendChild(chars);
-  cb.appendChild(charDetailEl(UI.viewChar));
+  // 5人ぶんの中身を同じ場所に重ねて作り、見ている1人だけを見せる（入れ物はいつも一番背の高い中身の大きさ＝選び直しても大きさが変わらない）
+  const cds = el('div', 'cdetails');
+  for (const ck in CHARS) { const d = charDetailEl(ck); if (ck === UI.viewChar) d.classList.add('on'); cds.appendChild(d); }
+  cb.appendChild(cds);
   t.appendChild(cb);
 
   const sb = el('div', 'tblock');
@@ -12732,8 +12772,14 @@ UI.renderTitle = function () {
     const s = STAGES[sk];
     const unlocked = !!META.stages[sk];
     const b = el('button', 'stage' + (UI.selStage === sk ? ' sel' : '') + (unlocked ? '' : ' lock'));
-    b.appendChild(el('div', 'nm', unlocked ? s.name : '？？？'));
-    b.appendChild(el('div', 'ds', unlocked ? s.desc : '「' + STAGES[s.unlock].name + '」をクリアする（' + STAGES[s.unlock].clearText + '）と解放'));
+    // 解放前・後の文を同じ場所に重ねて、今の方だけ見せる（解放しても札の大きさが変わらない）
+    const lockT = s.unlock ? '「' + STAGES[s.unlock].name + '」をクリアする（' + STAGES[s.unlock].clearText + '）と解放' : '';
+    const nm = el('div', 'nm stk');
+    nm.appendChild(el('span', unlocked ? 'on' : '', s.name)); nm.appendChild(el('span', unlocked ? '' : 'on', '？？？'));
+    b.appendChild(nm);
+    const ds = el('div', 'ds stk');
+    ds.appendChild(el('span', unlocked ? 'on' : '', s.desc)); ds.appendChild(el('span', unlocked ? '' : 'on', lockT));
+    b.appendChild(ds);
     b.addEventListener('click', () => { sfx('ui'); if (!unlocked) return; UI.selStage = sk; UI.renderTitle(); });
     stages.appendChild(b);
   }
@@ -12752,7 +12798,8 @@ UI.renderTitle = function () {
   });
   go.appendChild(startBtn);
   mb.appendChild(go);
-  const menu = el('div', 'tmenu');
+  // ボタンは同じ大きさの升目に並べる（文字の長さや ◆ の数で大きさが変わらない）
+  const menu = el('div', 'tmenu tgrid');
   const mk = (label, fn) => { const b = el('button', 'btn', label); b.addEventListener('click', () => { audioInit(); sfx('ui'); fn(); }); menu.appendChild(b); };
   mk(`魂の祭壇 <span class="crys">◆${META.crystals}</span>`, () => UI.openAltar());
   mk('記録', () => UI.openBook('recipe'));
@@ -12765,6 +12812,12 @@ UI.renderTitle = function () {
   mb.appendChild(menu);
   const st = META.stats;
   mb.appendChild(el('div', 'small', `<div style="text-align:center;margin-top:12px">出陣 ${st.runs} 回　討伐 ${st.clears} 回　最長 ${fmtTime(st.bestTime)}</div>`));
+  // バージョン（右下に小さく）
+  let ver = 'v' + GAME_VERSION;
+  // タイトルの画面は中で動く（スクロール・登場の動き）ので、外（body）に置いて画面の右下に固定する。タイトルが閉じたら隠れる（CSS）
+  let tv = $('tver');
+  if (!tv) { tv = el('div', 'tver'); tv.id = 'tver'; document.body.appendChild(tv); }
+  tv.textContent = ver;
   t.appendChild(mb);
 };
 
@@ -13004,6 +13057,66 @@ UI.openLevelUp = function () {
   UI.renderLevelUp('open');
 };
 
+// レベルアップのカード（選ぶ処理はつけない。大きさを測るときにも使う）
+function lvCardEl(c) {
+  const info = choiceInfo(c);
+  const cat = CAT[info.cat];
+  const card = el('button', 'card' + (c.type === 'evo' ? ' evo' : c.type === 'lead' ? ' lead' : ''));
+  card.dataset.col = cat.color;
+  card.appendChild(el('span', 'cat', cat.name)).style.background = cat.color;
+  if (info.isNew) card.appendChild(el('span', 'new', c.type === 'evo' ? '秘術' : 'NEW'));
+  // アイコン（ドット絵）と名前・段階
+  const hd = el('div', 'chd');
+  const ic = el('div', 'cic');
+  ic.appendChild(spriteIcon(choiceIcon(c), 0, 3));
+  hd.appendChild(ic);
+  const tx = el('div', 'ctx');
+  tx.appendChild(el('div', 'nm', info.name));
+  if (info.max > 1) {
+    const pips = el('div', 'pips');
+    for (let i = 1; i <= info.max; i++) pips.appendChild(el('i', i < info.lv ? 'on' : i === info.lv ? 'nx' : ''));
+    tx.appendChild(pips);
+  }
+  hd.appendChild(tx);
+  card.appendChild(hd);
+  card.appendChild(el('div', 'ds', info.desc + (info.req ? `<br><span class="small">${info.req}</span>` : '') + (info.note ? `<br><span class="small">${info.note}</span>` : '')
+    + (info.master ? `<br><span class="small mst">最大Lv：さらに強化</span>` : '')));
+  // 道の歩み（このカードを選んだ後）
+  if (info.path) {
+    const P = info.path;
+    const pp = el('div', 'cpath' + (P.up ? ' up' : ''));
+    pp.style.setProperty('--pc', cat.color);
+    let pips = '';
+    for (let i = 1; i <= 3; i++) pips += `<i class="${i <= P.tier ? 'on' : ''}"></i>`;
+    pp.innerHTML = `<span class="pn">${P.name}</span><span class="tp">${pips}</span><span class="pt">${P.maxed ? '極み' : `Lv計 ${P.pts}/${P.next}`}</span><span class="pq">効果</span>`
+      + (P.up ? `<div class="pu">位階${TIER_NAMES[P.tier]}：${P.up}</div>` : '');
+    // 道の行を押すと、その道の効果を出す（カードは選ばない）
+    UI.bindTip(pp, pathTipHtml(P.cat, P.pts, P.pts - 1), cat.color);
+    card.appendChild(pp);
+  }
+  return card;
+}
+
+// カードの高さをそろえる：出うるカード（術式・秘術・回復など）を見えない所に並べて、一番背の高いものに合わせる
+// 画面の幅と出撃ごとに1回だけ測る（同じ出撃・同じ画面の間は、どのレベルアップでも同じ高さ＝画面がぴくぴく動かない）
+function lvCardMinH(p, cards) {
+  const key = cards.clientWidth + 'x' + window.innerHeight;
+  if (G.lvCardH && G.lvCardH.key === key) return G.lvCardH.h;   // 出撃（G）ごとに覚える
+  const probe = el('div', 'cards');
+  probe.style.cssText = `position:absolute;left:0;top:0;width:${cards.clientWidth}px;visibility:hidden;pointer-events:none;align-items:start`;
+  p.appendChild(probe);
+  const list = [];
+  for (const k in SKILLS) if ((G.skills[k] || 0) < SKILLS[k].max) list.push({ type: 'skill', key: k });
+  for (const k in EVOS) if (!G.evos[k]) list.push({ type: 'evo', key: k });
+  list.push({ type: 'heal' }, { type: 'gold' });
+  let h = 0;
+  for (const c of list) { let e; try { e = lvCardEl(c); } catch (er) { continue; } probe.appendChild(e); }
+  for (const e of probe.children) h = Math.max(h, e.offsetHeight);
+  probe.remove();
+  G.lvCardH = { key, h };
+  return h;
+}
+
 // mode：演出の種類（'open' 最初・'next' 続けてのレベルアップ・'reroll' 引き直し）。なければ演出なし
 UI.renderLevelUp = function (mode, old) {
   const s = $('levelup');
@@ -13012,41 +13125,7 @@ UI.renderLevelUp = function (mode, old) {
   p.appendChild(el('h2', '', `レベルアップ <span style="color:var(--green)">Lv ${G.necro.lv - G.pendingLv + 1}</span><span class="sub">${ctlEl('lvSub')}${G.pendingLv > 1 ? '（残り ' + G.pendingLv + '）' : ''}</span>`));
   const cards = el('div', 'cards');
   UI.lvChoices.forEach((c) => {
-    const info = choiceInfo(c);
-    const cat = CAT[info.cat];
-    const card = el('button', 'card' + (c.type === 'evo' ? ' evo' : c.type === 'lead' ? ' lead' : ''));
-    card.dataset.col = cat.color;
-    card.appendChild(el('span', 'cat', cat.name)).style.background = cat.color;
-    if (info.isNew) card.appendChild(el('span', 'new', c.type === 'evo' ? '秘術' : 'NEW'));
-    // アイコン（ドット絵）と名前・段階
-    const hd = el('div', 'chd');
-    const ic = el('div', 'cic');
-    ic.appendChild(spriteIcon(choiceIcon(c), 0, 3));
-    hd.appendChild(ic);
-    const tx = el('div', 'ctx');
-    tx.appendChild(el('div', 'nm', info.name));
-    if (info.max > 1) {
-      const pips = el('div', 'pips');
-      for (let i = 1; i <= info.max; i++) pips.appendChild(el('i', i < info.lv ? 'on' : i === info.lv ? 'nx' : ''));
-      tx.appendChild(pips);
-    }
-    hd.appendChild(tx);
-    card.appendChild(hd);
-    card.appendChild(el('div', 'ds', info.desc + (info.req ? `<br><span class="small">${info.req}</span>` : '') + (info.note ? `<br><span class="small">${info.note}</span>` : '')
-      + (info.master ? `<br><span class="small mst">最大Lv：さらに強化</span>` : '')));
-    // 道の歩み（このカードを選んだ後）
-    if (info.path) {
-      const P = info.path;
-      const pp = el('div', 'cpath' + (P.up ? ' up' : ''));
-      pp.style.setProperty('--pc', cat.color);
-      let pips = '';
-      for (let i = 1; i <= 3; i++) pips += `<i class="${i <= P.tier ? 'on' : ''}"></i>`;
-      pp.innerHTML = `<span class="pn">${P.name}</span><span class="tp">${pips}</span><span class="pt">${P.maxed ? '極み' : `Lv計 ${P.pts}/${P.next}`}</span><span class="pq">効果</span>`
-        + (P.up ? `<div class="pu">位階${TIER_NAMES[P.tier]}：${P.up}</div>` : '');
-      // 道の行を押すと、その道の効果を出す（カードは選ばない）
-      UI.bindTip(pp, pathTipHtml(P.cat, P.pts, P.pts - 1), cat.color);
-      card.appendChild(pp);
-    }
+    const card = lvCardEl(c);
     card.addEventListener('click', () => {
       if (performance.now() < UI.lvLock) return;
       // まだ飛んでいる途中（着地していない）カードは選べない（重い端末で演出が遅れたとき）
@@ -13080,6 +13159,8 @@ UI.renderLevelUp = function (mode, old) {
   }
   p.appendChild(UI.ownedSkillsEl());
   s.appendChild(p);
+  // カードの高さをそろえる（演出の前に。演出はカードの位置と大きさを写す）
+  { const h = lvCardMinH(p, cards); if (h > 0) for (const c of cards.children) c.style.minHeight = h + 'px'; }
   if (mode) UI.lvfxPlay(mode, old);
   else if (old) for (const g of old) g.el.remove();
 };
@@ -13115,13 +13196,21 @@ function skillStatusHtml(k) {
 }
 
 // 統率力の全段階（上の段階は下の段階の動きもすべて行う）。cur：今の段階。showNext：次の段階に「次」の印
+// 祭壇の「術式の解放」の行の説明：細かい補足（末尾の（…））は省く術式がある（戦闘中の説明にはそのまま出る）
+const ALTAR_BRIEF = { yomigaeri: true, kingaura: true, apex: true };
+function altarSkillDesc(k) {
+  const S = SKILLS[k], d = S.desc(skillEff(k, S.max));
+  return ALTAR_BRIEF[k] ? d.replace(/（[^（）]*）$/, '') : d;
+}
 function leadListHtml(cur, showNext) {
   let h = '<div class="leadlist">';
   for (let i = 1; i <= LEAD_MAX; i++) {
     const L = LEADERSHIP[i], on = i <= cur, nx = showNext && i === cur + 1;
-    h += `<div class="${on ? 'pon' : nx ? 'pnx' : 'poff'}">${on ? '◆' : '◇'} ${L.name}：${L.desc}${nx ? ' <b class="pnew">次</b>' : ''}</div>`;
+    // 段階の名前は幅をそろえて、説明の頭の位置を縦にそろえる
+    h += `<div class="${on ? 'pon' : nx ? 'pnx' : 'poff'}">${on ? '◆' : '◇'} <span class="ln">${L.name}</span><span class="pconly">：</span><br class="sp">${L.desc}${nx ? ' <b class="pnew">次</b>' : ''}</div>`;
   }
-  return h + `<div class="lnote">段階が上がっても下の段階の動きはそのまま。1段階ごとに軍勢の攻撃・守り +${Math.round(TU.lead_bonus * 100)}%（今 +${Math.round(TU.lead_bonus * 100 * cur)}%）</div></div>`;
+  // 祭壇（showNext）では今の合計は出さない。戦闘中の説明では今の合計も出す
+  return h + `<div class="lnote">段階が上がっても下の段階の動きはそのまま。<br>1段階ごとに軍勢の攻撃・守り +${Math.round(TU.lead_bonus * 100)}%${showNext ? '' : `（今 +${Math.round(TU.lead_bonus * 100 * cur)}%）`}</div></div>`;
 }
 
 // 道の説明（位階ごとの効果）。before があれば「選ぶと before → pts」として、新しく届く位階に印を付ける
@@ -13414,7 +13503,7 @@ UI.renderPot = function () {
     const n = UI.potGroups.filter((g) => k === 'all' || (k === 'syn' ? g.syn || g.isBoss || g.mid : g.lin === k)).length;
     if (k !== 'all' && !n) continue;
     const b = el('button', 'pchip' + (UI.potFilter === k ? ' on' : ''), `${label}<small>${n}</small>`);
-    b.addEventListener('click', () => { UI.potFilter = k; UI.renderPot(); sfx('ui'); });
+    b.addEventListener('click', () => { const ch = UI.potFilter !== k; UI.potFilter = k; UI.renderPot(); if (ch) { const g = $('pot').querySelector('.ptiles'); if (g) g.scrollTop = 0; } sfx('ui'); });   // 絞り込みを変えたら一覧は先頭から（横に並ぶ絞り込みの位置はそのまま）
     filt.appendChild(b);
   }
   left.appendChild(filt);
@@ -14026,6 +14115,7 @@ UI.openPause = function () {
   s.innerHTML = '';
   const p = el('div', 'panel');
   p.style.maxWidth = '480px';
+  p.classList.add('fixh');   // 術式が増えても大きさは同じ（中はスクロール）
   p.appendChild(el('h2', '', `一時停止<span class="sub">${STAGES[G.stage].name}・${CHARS[G.char].name}・${fmtTime(G.t)}</span>`));
   const sc = el('div', 'scroll');
   const tg = (label, get, set) => {
@@ -14049,12 +14139,13 @@ UI.openPause = function () {
     r.appendChild(b); sc.appendChild(r); }
   sc.appendChild(el('div', 'tbl-h', '習得した術式'));
   sc.appendChild(UI.ownedSkillsEl());
+  sc.style.flex = '1'; sc.style.minHeight = '0';
   p.appendChild(sc);
-  const foot = el('div', 'foot');
+  const foot = el('div', 'foot ufoot');
   const quit = el('button', 'btn danger', 'あきらめる');
   quit.addEventListener('click', () => {
     if (quit.dataset.c) { showScreen('pause', false); G.state = 'play'; G.retired = true; G.necro.dead = true; G.necro.hp = 0; onNecroDeath(); G.ending = 0.01; return; }
-    quit.dataset.c = '1'; quit.textContent = ctl('quitArmed');
+    quit.dataset.c = '1'; quit.classList.add('armed'); quit.textContent = ctl('quitArmed');
   });
   const res = el('button', 'btn primary', '再開');
   res.addEventListener('click', () => UI.closePause());
@@ -14111,6 +14202,7 @@ UI.showResult = function (res) {
   s.innerHTML = '';
   const p = el('div', 'panel');
   p.style.maxWidth = '620px';
+  p.classList.add('fixh');   // 解放の有無で大きさが変わらない
   const win = G.victory;
   p.appendChild(el('div', 'res-title ' + (win ? 'win' : 'lose'), win ? '凱旋' : G.retired ? '撤退' : '敗北'));
   p.appendChild(el('div', 'res-sub', win
@@ -14144,7 +14236,7 @@ UI.showResult = function (res) {
     body.appendChild(box);
   }
   p.appendChild(body);
-  const foot = el('div', 'foot');
+  const foot = el('div', 'foot ufoot');
   const t = el('button', 'btn', 'タイトルへ');
   t.addEventListener('click', () => { UI.hideTipPop(); showScreen('result', false); UI.showTitle(); });
   const again = el('button', 'btn primary', 'もう一度');
@@ -14198,7 +14290,7 @@ UI.openAltar = function () {
     const S = SKILLS[k], P = PATHS[S.cat];
     // 効果は最大Lvの値で見せる（Lv1 の値だと弱く見える）。解放前でも効果がわかるように
     row.appendChild(el('div', '', `<div class="nm" style="color:${open ? 'var(--green)' : 'var(--mute)'}">${S.name}<span class="upath" style="color:${CAT[S.cat].color}">${P ? P.name : ''}</span>${open ? '<span class="uok">解放済み</span>' : ''}</div>`
-      + `<div class="ds">最大Lv：${S.desc(skillEff(k, S.max))}</div>` + (open ? '' : `<div class="ds ucond">条件：${u.text}（${v}/${u.n}）</div>`)));
+      + `<div class="ds">最大Lv：<br class="sp">${altarSkillDesc(k)}</div>` + (open ? '' : `<div class="ds ucond">条件：${u.text}（${v}/${u.n}）</div>`)));
     l.appendChild(row);
   }
   p.appendChild(l);
@@ -14325,7 +14417,7 @@ UI.buildRecipe = function (box) {
       }
     }
     sc.appendChild(mat);
-    sc.appendChild(el('div', 'rcnote', '<b>行</b>＝Lvが高いほうのメインの系統（戦い方が決まる）、<b>列</b>＝もう一方のメインの系統（性質が決まる）。同じ系統どうしは斜めの枠。'));
+    sc.appendChild(el('div', 'rcnote', '<b>行</b>＝Lvが高いほうのメインの系統（戦い方が決まる）<span class="pconly">、</span><br class="sp"><b>列</b>＝もう一方のメインの系統（性質が決まる）。<br class="sp"><span class="sponly">　　</span>同じ系統どうしは斜めの枠。'));
   } else if (R.tab === 'kin') {
     const list = el('div', 'rclist');
     for (const kk in KIN) {
@@ -14387,7 +14479,7 @@ UI.buildRecipe = function (box) {
   const cs = (c) => `<b class="c${c}">${COL_NAMES[c]}</b>`;
   rule.innerHTML = `<div class="rt">体の質＝メイン2体の平均</div><div class="cols">${[[0, 0, 0], [0, 1, 1], [0, 2, 1], [1, 1, 1], [1, 2, 2], [2, 2, 2]].map(([a, b, c]) => `<span>${cs(a)}＋${cs(b)}→${cs(c)}</span>`).join('')}</div>`
     + `<div class="rt">★＝メイン2体の★が近い（差1以内）と1段上がる</div><div class="ladder">${[0, 1, 2, 3, 4, 5].map((r) => `<span class="lst ${r ? 'star r' + r : ''}">${r ? '★' + r : '死者★0'}</span>`).join('<i>▶</i>')}</div>`
-    + '<div class="dim">中ボスは★2、配下のボスは★3として数える。★が上がると色と名前が変わり、基礎の強さが上がる。</div>';
+    + '<div class="dim">中ボスは★2、配下のボスは★3として数える。<br class="sp">★が上がると色と名前が変わり、基礎の強さが上がる。</div>';
   sc.appendChild(rule);
   UI.rcSel();
 };
@@ -14420,8 +14512,6 @@ UI.rcSel = function () {
       : `メイン：<b style="color:${LIN[l].color}">${LIN[l].name}</b>の死者（Lvが高いほう）＋<b style="color:${LIN[ml].color}">${LIN[ml].name}</b>の死者・平均が${col}`;
   }
   const stars = ranks.map((r) => `<span class="star r${r}" style="${META.recipes[body + '#' + r] ? '' : 'opacity:.22'}">★${r}</span>`).join('');
-  let afn = 0;
-  for (const k of AFFIX_KEYS) if (META.affixes[body + '|' + k]) afn++;
   const nm = (k) => (META.recipes[k.key] ? SYNTH[k.key].name : '？？？');
   const pair = (k) => `<div class="pr">${unitTitle(k.a)}<small>Lv${k.a.g}</small>＋${unitTitle(k.b)}<small>Lv${k.b.g}</small></div><div class="pr2">→ ${starTag(k.rank)}<b>${nm(k)}</b>${META.recipes[k.key] ? '' : '<b class="nw">新種</b>'}</div>`;
   let can = '';
@@ -14431,7 +14521,7 @@ UI.rcSel = function () {
     can += '</div>';
   } else if (R.inRun) can = '<div class="rcno">今の兵では作れない</div>';
   det.innerHTML = `<div class="rdh"><div class="ic"></div><div class="tx"><div class="n">${top ? S.name : '？？？'}${top ? '' : '<span class="dim">　未発見</span>'}</div>`
-    + `<div class="g">${top ? gradeTags(body + '#' + top) : ''} ${stars}<span class="dim">　亜種${afn}/${AFFIX_KEYS.length}</span></div></div></div>`
+    + `<div class="g">${top ? gradeTags(body + '#' + top) : ''} ${stars}</div></div></div>`
     + `<div class="how">${how}</div>`
     + (top ? `<div class="ds">${S.desc || ''}</div>` : '')
     + can;
@@ -14513,14 +14603,8 @@ UI.openBook = function (tab) {
     return c;
   };
   if (tab === 'recipe') {
-    let found = 0, total = 0, afound = 0, atotal = 0;
-    // 亜種の発見状況（体ごと）
-    const affixRow = (body) => {
-      let n = 0;
-      const tags = AFFIX_KEYS.map((k) => { atotal++; const on = !!META.affixes[body + '|' + k]; if (on) { afound++; n++; } return `<i class="apip" title="${AFFIXES[k].name}" style="background:${on ? AFFIXES[k].color : 'transparent'};border-color:${AFFIXES[k].color}"></i>`; }).join('');
-      return `<div class="apips">亜種 ${n}/${AFFIX_KEYS.length} ${tags}</div>`;
-    };
-    sc.appendChild(el('div', 'small', '<div style="padding:8px 14px 0;color:var(--dim);line-height:1.5">メイン2体の系統（Lvの高いほうが先）と体の質（肉・骨・霊）の平均で種類が決まる。★の近い2体をメインにすると★が1つ上がり、色と名前が変わって基礎の強さが上がる（★1〜★5）。同じ種類の死者2体をメインにすると<b style="color:var(--gold);font-weight:normal">同族合成</b>。サブの半分以上（3体以上）を同じ種類にすると、その種類の性質を持つ<b style="color:var(--gold);font-weight:normal">亜種</b>になる（13種）。</div>'));
+    let found = 0, total = 0;
+    sc.appendChild(el('div', 'small', '<div style="padding:8px 14px 0;color:var(--dim);line-height:1.5">メイン2体の系統＋体の質（肉・骨・霊）<br class="sp">の平均で種類が決まる。<br class="sp"><br class="sp">★の近い2体をメインにすると★が1つ上がり、色と名前が変わって基礎の強さが上がる。<br class="sp"><br class="sp">同じ種類の死者2体をメインにすると<b style="color:var(--gold);font-weight:normal">同族合成</b>。<br class="sp">サブの3体以上を同じ種類にすると、その種類の性質を持つ<b style="color:var(--gold);font-weight:normal">亜種</b>になる。</div>'));
     for (const l of LIN_KEYS) {
       sc.appendChild(el('div', 'tbl-h', `${LIN[l].name}の核（${LIN[l].desc}）`));
       const grid = el('div', 'bgrid');
@@ -14532,7 +14616,7 @@ UI.openBook = function (tab) {
           const d = SYNTH[body + '#' + (top || 1)];
           const stars = [1, 2, 3, 4, 5].map((r) => `<span class="star r${r}" style="${META.recipes[body + '#' + r] ? '' : 'opacity:.25'}">★${r}</span>`).join('');
           const how = `メイン：${LIN[l].name}${ml === l ? '＋' + LIN[l].name : '＋' + LIN[ml].name}・${COL_NAMES[c]}`;
-          grid.appendChild(cell('syn_' + body + '#' + (top || 1), 1, cnt > 0, d.name, `${how}<br>${gradeTags(body + '#1')}<br>${stars}${affixRow(body)}${cnt ? d.desc : ''}`));
+          grid.appendChild(cell('syn_' + body + '#' + (top || 1), 1, cnt > 0, d.name, `${how}<br>${gradeTags(body + '#1')}<br>${stars}${cnt ? '<div class="bdesc">' + d.desc + '</div>' : ''}`));
         }
       }
       sc.appendChild(grid);
@@ -14545,7 +14629,7 @@ UI.openBook = function (tab) {
         for (let r = 1; r <= SP_MAX; r++) { total++; if (META.recipes[body + '#' + r]) { found++; cnt++; top = r; } }
         const d = SYNTH[body + '#' + (top || 1)];
         const stars = [1, 2, 3, 4, 5].map((r) => `<span class="star r${r}" style="${META.recipes[body + '#' + r] ? '' : 'opacity:.25'}">★${r}</span>`).join('');
-        gk.appendChild(cell('syn_' + body + '#' + (top || 1), 1, cnt > 0, d.name, `メイン：${ETYPES[kk].name}＋${ETYPES[kk].name}・${COL_NAMES[c]}<br>${gradeTags(body + '#1')}<br>${stars}${affixRow(body)}${cnt ? d.desc : ''}`));
+        gk.appendChild(cell('syn_' + body + '#' + (top || 1), 1, cnt > 0, d.name, `メイン：${ETYPES[kk].name}＋${ETYPES[kk].name}・${COL_NAMES[c]}<br>${gradeTags(body + '#1')}<br>${stars}${cnt ? '<div class="bdesc">' + d.desc + '</div>' : ''}`));
       }
       sc.appendChild(gk); }
     sc.appendChild(el('div', 'tbl-h', '伝承の死霊（決まった2種族をメインにする。片方は★1以上。★2〜★5）'));
@@ -14557,7 +14641,7 @@ UI.openBook = function (tab) {
         const d = SYNTH[body + '#' + (top || 2)];
         const stars = LEGEND_RANKS.map((r) => `<span class="star r${r}" style="${META.recipes[body + '#' + r] ? '' : 'opacity:.25'}">★${r}</span>`).join('');
         const nm2 = (kk) => (META.seen[kk] ? ETYPES[kk].name : '？？？');
-        gl.appendChild(cell('syn_' + body + '#' + (top || 2), 1, cnt > 0, d.name, `メイン：${nm2(L.pair[0])}＋${nm2(L.pair[1])}・${COL_NAMES[L.col]}<br>${gradeTags(body + '#2')}<br>${stars}${affixRow(body)}${cnt ? d.desc : ''}`));
+        gl.appendChild(cell('syn_' + body + '#' + (top || 2), 1, cnt > 0, d.name, `メイン：${nm2(L.pair[0])}＋${nm2(L.pair[1])}・${COL_NAMES[L.col]}<br>${gradeTags(body + '#2')}<br>${stars}${cnt ? '<div class="bdesc">' + d.desc + '</div>' : ''}`));
       }
       sc.appendChild(gl); }
     sc.appendChild(el('div', 'tbl-h', '堕ちたボス（ボスをメインにする。体の質で3つの姿、★4と★5）'));
@@ -14571,11 +14655,11 @@ UI.openBook = function (tab) {
         const d = SYNTH[body + '#' + (top || 4)];
         const stars = [4, 5].map((r) => `<span class="star r${r}" style="${META.recipes[body + '#' + r] ? '' : 'opacity:.25'}">★${r}</span>`).join('');
         const how = `メイン：${META.raisedBoss[bk] || META.killedBoss[bk] ? BOSSES[bk].name : '？？？'}＋何か・${COL_NAMES[c]}`;
-        g2.appendChild(cell('syn_' + body + '#' + (top || 4), 1, cnt > 0, d.name, `${how}<br>${stars}${affixRow(body)}${cnt ? FALLEN_FORMS[c].feat : ''}`));
+        g2.appendChild(cell('syn_' + body + '#' + (top || 4), 1, cnt > 0, d.name, `${how}<br>${stars}${cnt ? '<div class="bdesc">' + FALLEN_FORMS[c].feat + '</div>' : ''}`));
       }
     }
     sc.appendChild(g2);
-    p.querySelector('h2').innerHTML = `記録<span class="sub">種 ${found}/${total}・亜種 ${afound}/${atotal}</span>`;
+    p.querySelector('h2').innerHTML = `記録<span class="sub">種 ${found}/${total}</span>`;
   } else {
     sc.appendChild(el('div', 'tbl-h', '討伐隊'));
     const grid = el('div', 'bgrid');
@@ -14613,6 +14697,7 @@ UI.openHowto = function (thenStart) {
   s.innerHTML = '';
   const p = el('div', 'panel');
   p.style.maxWidth = '600px';
+  p.style.height = '100%';   // タブを切り替えても大きさが変わらない
   p.appendChild(el('h2', '', '遊び方'));
   const h = el('div', 'howto scroll');
   // 遊び方は「タブ」で分ける（一度に全部を読まなくてよいように）
@@ -14620,43 +14705,43 @@ UI.openHowto = function (thenStart) {
   const pages = {
     basic: ['基本', `
     <h3>動く・止まる</h3>
-    ${ctlEl('moveShort')}<b>止まると</b>、足元の円の中の死体が<b>一斉に蘇る</b>。<br>
+    ${ctlEl('moveShort')}<br class="sp"><b>止まると</b>、足元の円の中の死体が<b>一斉に蘇る</b>。<br>
     あなたは戦わず、とてもひ弱。戦うのは軍勢。
     <h3>軍勢</h3>
-    従えられる数には<b>上限</b>があり、レベルで増える（足元の「今/上限」）。
+    従えられる数には<b>上限</b>がありレベルで増える。
     <h3>死者のLv</h3>
     あなたより<b>Lvの高い死体</b>ほど、蘇らせるのに時間がかかる。<br>
-    色はあなたに対する強さ：白 → <span style="color:rgb(214,138,70)">銅</span> → <span style="color:rgb(214,226,240)">銀</span> → <span style="color:rgb(255,210,74)">金</span> → <span style="color:rgb(236,110,255)">紫</span>
+    色はあなたに対する強さ：<br class="sp">白 → <span style="color:rgb(214,138,70)">銅</span> → <span style="color:rgb(214,226,240)">銀</span> → <span style="color:rgb(255,210,74)">金</span> → <span style="color:rgb(236,110,255)">紫</span>
     <h3>劣化</h3>
-    倒れた味方はまた蘇らせられる。ただし<b>生前 → ゾンビ → スケルトン → 怨霊</b>と弱くなり、怨霊は倒れると消える。
+    倒れた味方はまた蘇らせられる。<br><b>生前 → ゾンビ → スケルトン → 怨霊</b>と弱くなり、怨霊は倒れると消える。
     <h3>術式</h3>
-    敵の<b>魂</b>でレベルが上がり、<b>術式</b>を1つ選ぶ。<b>赤い灯</b>は回復。<br>
-    術式は<b>5つ</b>（最大Lv8）、補助は<b>3つ</b>（最大Lv5）まで。選んだ術式は出やすくなる。<br>
+    敵の<b>魂</b>でレベルが上がり、<b>術式</b>を1つ選ぶ。<b>ハート</b>は回復。<br>
+    術式は<b>5つ</b>（最大Lv8）、補助は<b>3つ</b>（最大Lv5）<span class="pconly">まで。</span><br class="sp">選んだ術式は出やすくなる。<br>
     決まった2つを<b>Lv5</b>にすると<b>秘術</b>が出る。
     <h3>道</h3>
-    術式は<b>群れ・精鋭・循環・威光・系統</b>の5つの道に分かれる。同じ道のLvの合計で<b>位階</b>が上がり、特別な効果が付く。<br>
-    道を絞るほど強くなる。${ctlEl('pathHint')}効果が見られる。<br>
-    ネクロマンサーには<b>得意な道</b>がある。その道の術式が出やすく、Lv計も最初から +${CHAR_PATH_BONUS.pts}（系統は +${CHAR_PATH_BONUS.ptsLin}）。
+    術式は<b>群れ・精鋭・循環・威光・系統</b>の5つの道に分かれる。<br>同じ道のLvの合計で<b>位階</b>が上がり、特別な効果が付く。<br>
+    道を絞るほど強くなる。<br class="sp">${ctlEl('pathHint')}効果が見られる。<br>
+    ネクロマンサーには<b>得意な道</b>がある。<br>その道の術式が出やすく、Lv計も最初から +${CHAR_PATH_BONUS.pts}（系統は +${CHAR_PATH_BONUS.ptsLin}）。
     <h3>統率力</h3>
     最初は「陣形」。<b>魂の祭壇</b>で上げるほど軍勢が賢く動き、攻撃と守りも上がる（全5段階）。`],
     synth: ['合成', `
     <h3>合成が主力</h3>
-    蘇らせたばかりの死者は<b>脆い</b>。窯で合成して強い死者に作り変えよう。
+    蘇らせたばかりの死者は<b>脆い</b>。<br class="sp">窯で合成して強い死者に作り変えよう。
     <h3>錬金窯</h3>
-    レベルが上がるたびに<b>足元に窯</b>が1つ現れる。輪の中で「錬金する」${ctlEl('potOpen')}。窯は1回で消える。
+    レベルが上がるたびに<b>足元に窯</b>が1つ現れる。輪の中で「錬金する」${ctlEl('potOpen')}。<br>窯は1回で消える。
     <h3>メイン2体 ＝ 何ができるか</h3>
-    メインの<b>系統</b>（武・射・術）と<b>体の質</b>（肉・骨・霊）で種類が決まる。<br>
-    ・<b>★</b>（1〜5）：★の近い2体だと★が上がる<br>
-    ・<b>同族合成</b>：同じ種類2体で、大きな死者に<br>
-    ・<b>堕ちたボス</b>：ボスをメインに<br>
-    ・<b>伝承の死霊</b>：決まった2種族で、名のある死霊に（レシピ図で確認）<br>
-    ・<b>新</b>の印：新種になる相手
+    メインの<b>系統</b>（武・射・術）と<br class="sp"><b>体の質</b>（肉・骨・霊）で種類が決まる。
+    <span class="hlist"><span>・<span class="hl"><b>★</b>（1〜5）</span>：★の近い2体だと★が上がる</span>
+    <span>・<span class="hl"><b>同族合成</b></span>：同じ種類2体で、大きな死者に</span>
+    <span>・<span class="hl"><b>堕ちたボス</b></span>：ボスをメインに</span>
+    <span>・<span class="hl"><b>伝承の死霊</b></span>：特定の2種族で名のある死霊に</span>
+    <span>・<span class="hl"><b>新</b>の印</span>：新種になる相手</span></span>
     <h3>サブ ＝ どれだけ強くなるか</h3>
-    入れるほど<b>Lv</b>と<b>能力</b>が伸びる。入れられる数はレベルで増える。<br>
+    入れるほど<b>Lv</b>と<b>能力</b>が伸びる。<br class="sp">入れられる数はレベルで増える。<br>
     同じ種類を<b>半分以上</b>入れると<b>亜種</b>になる。
     <h3>煮込み</h3>
     煮込み中の窯は敵に狙われる。壊されるとサブは失われ、メインは死体になる。<br>
-    あなたより<b>Lvの高い</b>死者を作るほど、煮込みが長くなる（Lv差1につき約1.08倍）。`],
+    あなたより<b>Lvの高い</b>死者を作るほど、煮込みが長くなる。`],
     stats: ['能力', `
     <h3>5つの能力</h3>
     <b>体力</b>・<b>攻撃</b>・<b>素早さ</b>（足）・<b>手数</b>（攻撃の速さ）・<b>体格</b>（大きいほど硬いが遅い）
@@ -14667,12 +14752,12 @@ UI.openHowto = function (thenStart) {
     foe: ['敵', `
     <h3>流れ</h3>
     2分30秒ごとに討伐隊が勢いづく（「猛攻」）。耐えて合成で押し返そう。<br>
-    5分・10分にボス、7分30秒に<b>巨人</b>、12分30秒に<b>黒竜</b>、15分に<b>勇者</b>。
+    5分・10分にボス<br>また、特定の時間に強力なボスが出現
     <h3>クリア</h3>
-    <b>古戦場</b>：勇者を倒す。<br>
-    <b>聖都の城壁</b>：勇者のあとに<b>神</b>が降りる。神を倒したら、屍の上で<b>1分</b>止まって死神にする。
+    <b>古戦場</b>　　：勇者を倒す。<br>
+    <b>聖都の城壁</b>：<b>神</b>を蘇らせる。
     <h3>ボスの攻撃</h3>
-    地面に予告が出る。<b>赤く点滅</b>する予告はあなたに当たる。
+    地面に攻撃予兆が出る。<br class="sp"><b>赤く点滅</b>する攻撃予兆はあなたに当たる。
     <h3>中ボス・新しい敵</h3>
     中ボスは倒して蘇らせると強い配下になる。ボスを初めて倒すと、次から新しい敵が加わる。`],
     words: ['用語', `
@@ -14693,13 +14778,32 @@ UI.openHowto = function (thenStart) {
     </table>`],
     keys: ['操作', ctlEl('howtoKeys', 'div')],
   };
-  const show = (k) => {
+  const show = (k, dir) => {
     for (const b of tabs.children) b.classList.toggle('on', b.dataset.k === k);
     h.innerHTML = pages[k][1];
     // 開いた後に操作が変わっていても、いまの操作の文にする
     for (const e of h.querySelectorAll('[data-ctl]')) e.innerHTML = ctl(e.dataset.ctl);
     h.scrollTop = 0;
+    // 横に払って切り替えたときは、払った向きから文が入ってくる
+    h.classList.remove('swl', 'swr');
+    if (dir) { void h.offsetWidth; h.classList.add(dir > 0 ? 'swl' : 'swr'); }
   };
+  // 指で横に払うと隣のタブへ（縦のスクロールはそのまま）
+  { let sw = null;
+    h.addEventListener('pointerdown', (e) => { sw = e.pointerType !== 'mouse' || inputMode() === 'touch' ? { id: e.pointerId, x: e.clientX, y: e.clientY } : null; });
+    h.addEventListener('pointercancel', (e) => { if (sw && sw.id === e.pointerId) sw = null; });
+    h.addEventListener('pointerup', (e) => {
+      if (!sw || sw.id !== e.pointerId) return;
+      const dx = e.clientX - sw.x, dy = e.clientY - sw.y;
+      sw = null;
+      if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+      const vis = [...tabs.children].filter((b) => b.offsetParent);
+      const i = vis.findIndex((b) => b.classList.contains('on'));
+      const n = vis[i + (dx < 0 ? 1 : -1)];
+      if (!n) return;
+      sfx('ui'); show(n.dataset.k, dx < 0 ? 1 : -1);
+    });
+  }
   for (const k in pages) { const b = el('button', '', pages[k][0]); b.dataset.k = k; b.addEventListener('click', () => show(k)); tabs.appendChild(b); }
   p.appendChild(tabs);
   show('basic');
@@ -14761,6 +14865,9 @@ const imNow = () => performance.now() / 1000;
 window.addEventListener('keydown', (e) => {
   // 修飾キーだけ（Alt+Tab で窓を切り替えた時など）は数えない
   if (e.key === 'Alt' || e.key === 'Meta' || e.key === 'Control' || e.key === 'OS') return;
+  // 文字を打つ欄での入力（スマホの画面キーボードなど）は、ゲームのキーボード操作に数えない
+  const tg = e.target;
+  if (tg && (tg.isContentEditable || tg.tagName === 'INPUT' || tg.tagName === 'TEXTAREA')) return;
   IM.lastKey = imNow(); imUpdate();
 }, true);
 window.addEventListener('pointerdown', (e) => {
@@ -14861,8 +14968,8 @@ const CTL = {
       + (extra.length ? `割り当てたキー：${extra.join('、')}<br>` : '')
       + '<span class="dim">ほかのキーは「キー設定」で割り当てられる。</span>';
     const S = {
-      touch: ['スマホ・タブレット', '指でなぞって移動、離して止まると死体が蘇る。<br>下の「錬金する」で窯、右上の「II」で一時停止（軍勢の一覧もここ）。<br>サブはタップで1体、長押しで全部。説明はタップで出る。'],
-      mouse: ['マウス', 'ドラッグで移動、離して止まると死体が蘇る。<br>下の「錬金する」（窯の上の案内も押せる）で窯、右上の「II」で一時停止（軍勢の一覧もここ）。<br>サブはクリックで1体、長押しで全部。説明はカーソルを合わせると出る。'],
+      touch: ['スマホ・タブレット', '指でなぞって移動、離して止まると死体が蘇る。<br><br>下の「錬金する」で窯、右上の「II」で一時停止<br><br>サブはタップで1体、長押しで全部。<br>説明はタップで出る。'],
+      mouse: ['マウス', 'ドラッグで移動、離して止まると死体が蘇る。<br>下の「錬金する」で窯、右上の「II」で一時停止。<br>サブはクリックで1体、長押しで全部。説明はカーソルを合わせると出る。'],
       kb: ['キーボード', kbText],
       kbm: ['キーボード＋マウス', `<b>${kMv()}</b> で移動、止まると死体が蘇る。窯の輪の中で <b>${kOk()}</b> を押すと錬金窯。<br>画面のボタンやタイルはクリック。説明はカーソルを合わせると出る。` + (extra.length ? `<br>割り当てたキー：${extra.join('、')}` : '') + '<br><span class="dim">ほかのキーは「キー設定」で割り当てられる。</span>'],
     };
@@ -15211,8 +15318,8 @@ const KEY_ACTIONS = [
   { id: 'left', name: '左', desc: '', def: ['KeyA'], group: '移動・選ぶ' },
   { id: 'down', name: '下', desc: '', def: ['KeyS'], group: '移動・選ぶ' },
   { id: 'right', name: '右', desc: '', def: ['KeyD'], group: '移動・選ぶ' },
-  { id: 'ok', name: '決定', desc: '画面のボタンを押す。戦闘中は窯の輪の中で錬金窯を開く。錬金窯のタイルは長押しでまとめて入れる', def: ['Space'], group: '決定' },
-  { id: 'back', name: '戻る・閉じる', desc: '開いている画面を閉じる（錬金窯・一時停止・軍勢・レシピ図・遊び方など）', def: [], group: 'そのほか' },
+  { id: 'ok', name: '決定', desc: '画面のボタンを押す。戦闘中は窯の輪の中で錬金窯を開く。<br>錬金窯のタイルは長押しでまとめて入れる', def: ['Space'], group: '決定' },
+  { id: 'back', name: '戻る・閉じる', desc: '開いている画面を閉じる<br>（錬金窯・一時停止・軍勢・レシピ図・遊び方など）', def: [], group: 'そのほか' },
   { id: 'pause', name: '一時停止', desc: '戦闘中に一時停止する（もう一度で再開）', def: ['Escape'], group: 'そのほか' },
   { id: 'roster', name: '軍勢の一覧', desc: '戦闘中に軍勢の一覧を開く（もう一度で閉じる）', def: [], group: 'そのほか' },
   { id: 'card1', name: 'カード1', desc: 'レベルアップ・おすすめの1枚目を選ぶ', def: [], group: 'そのほか' },
@@ -15789,6 +15896,68 @@ document.addEventListener('pointerdown', lvfxBlockInput, true);
 // キーは 14_ui_kb.js の keydown（window・先に動く）で止める
 window.addEventListener('resize', () => { if (UI.lvfxBusy()) UI.lvfxSkip(); });
 
+// ==== 14_ui_scroll.js ====
+// =========================================================
+// 作り直してもスクロールの位置を保つ
+// 画面を作り直す（選んだ・買った・設定を変えた）たびに、一覧や横並びが最初の位置に戻らないようにする。
+// 作り直す前に、スクロールしている欄の位置を「種類（class）と何番目か」で覚えておき、作り直した後に同じ欄へ戻す。
+// 別のページに切り替える操作（タブなど）では使わない（新しいページは先頭から）
+// =========================================================
+// 選択や状態で付け外しする class は、同じ欄かどうかの見分けに使わない
+const SCROLL_STATE_CLS = new Set(['on', 'sel', 'view', 'kbf', 'lock', 'hidden', 'busy', 'boss', 'dis']);
+function scrollKeyOf(e) {
+  return e.tagName + '.' + [...e.classList].filter((c) => !SCROLL_STATE_CLS.has(c)).sort().join('.') + (e.id ? '#' + e.id : '');
+}
+// 覚える：スクロールしている欄だけ（root 自身も含む）
+function scrollSnap(root) {
+  const out = [];
+  if (!root) return out;
+  const cnt = {};
+  const visit = (e) => {
+    const k = scrollKeyOf(e);
+    const i = cnt[k] = (cnt[k] || 0) + 1;
+    if (e.scrollTop > 0 || e.scrollLeft > 0) out.push({ k, i, t: e.scrollTop, l: e.scrollLeft });
+  };
+  visit(root);
+  for (const e of root.querySelectorAll('*')) visit(e);
+  return out;
+}
+function scrollRestore(root, snap) {
+  if (!root || !snap.length) return;
+  const want = new Map(snap.map((s) => [s.k + '|' + s.i, s]));
+  const cnt = {};
+  const visit = (e) => {
+    const k = scrollKeyOf(e);
+    const i = cnt[k] = (cnt[k] || 0) + 1;
+    const s = want.get(k + '|' + i);
+    if (s) { e.scrollTop = s.t; e.scrollLeft = s.l; }
+  };
+  visit(root);
+  for (const e of root.querySelectorAll('*')) visit(e);
+}
+// fn を、開いている画面 root のスクロールを保ったまま呼ぶ
+function keepScroll(root, fn) {
+  const open = root && !root.classList.contains('hidden');
+  const snap = open ? scrollSnap(root) : [];
+  const v = fn();
+  if (snap.length) scrollRestore(root, snap);
+  return v;
+}
+// 作り直す関数を包む：開いたままの作り直しでは、スクロールの位置をそのままにする
+function keepScrollOn(name, rootId) {
+  const f = UI[name];
+  if (typeof f !== 'function' || f._keep) return;
+  const w = function (...a) { return keepScroll($(rootId), () => f.apply(this, a)); };
+  w._keep = true;
+  UI[name] = w;
+}
+keepScrollOn('renderTitle', 'title');      // キャラ・戦場を選ぶ、設定を変える
+keepScrollOn('openAltar', 'altar');        // 強化を買う
+keepScrollOn('renderRoster', 'roster');    // 軍勢の一覧で選ぶ
+keepScrollOn('renderKeys', 'keys');        // キーを割り当てる
+keepScrollOn('renderPot', 'pot');          // 窯で選ぶ・入れる
+keepScrollOn('renderLevelUp', 'levelup');
+
 // ==== 14_uidemo.js ====
 // ---------- 窯の操作方法（試作の切り替え） ----------
 // now：現状（メイン2体→決定→サブ→煮込む）
@@ -16054,12 +16223,16 @@ function frame(ts) {
   try {
     let playing = !!(G && G.state === 'play');
     if (playing) {
+      // ゲームの中で進める時間（ふつうは実際の時間と同じ）
+      let sdt = dt;
+      let watch = true;
       // 遅いフレームは2回に分けて進める。ただし進める処理そのものが重いときは分けない（重さが重さを呼ばないように）
-      const steps = dt > 0.026 && PERF.updCost < 4 && !PERF.slow ? 2 : 1;
+      // 1回に進める時間は 0.05 秒まで（ふつうは超えない。速さを上げたときは回数を増やす）
+      const steps = Math.max(sdt > 0.026 && PERF.updCost < 4 && !PERF.slow ? 2 : 1, Math.ceil(sdt / 0.05 - 1e-9));
       const a = performance.now();
-      for (let i = 0; i < steps; i++) update(dt / steps);
+      for (let i = 0; i < steps; i++) update(sdt / steps);
       PERF.updCost = PERF.updCost * 0.9 + (performance.now() - a) / steps * 0.1;
-      perfWatch(dt);
+      if (watch) perfWatch(dt);   // 重さの見張り（速さを変えている間は、重さで描画を軽くしない）
     }
     // 止まっている画面（一時停止・レベルアップ・錬金窯・結果など）では、後ろの戦場はほとんど変わらないので描き直しを減らす
     const st = G ? G.state : 'title';
