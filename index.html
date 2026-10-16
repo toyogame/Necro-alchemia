@@ -7637,6 +7637,8 @@ const TUNE_DEF = [
   ['_foe', 'foe_late', 0.05, '後半（7分→15分）で雑魚の Lv が上乗せされる割合（v42 まで 22%）', 'pc'],
   ['_foe', 'foe_surge', 0.2, '節目（襲撃）の直後に雑魚の Lv が上乗せされる割合', 'pc'],
   ['_foe', 'foe_rate_late', 0.85, '10分以降の雑魚の数の倍率（15分で この値。v42 まで 1）', ''],
+  ['_foe', 'boss_hp', 5, '敵のボス・中ボス（巨人・黒竜・勇者・神を含む）の体力の倍率（v72 で 1→5。中ボスは v74 から）', ''],
+  ['_foe', 'boss_unit_atk', 1.3, '敵のボス・中ボスが兵（ネクロマンサー以外）に与える傷の倍率（v72 で 1→1.3。中ボスは v74 から）', ''],
 ];
 const TUNE_BASE = {};
 for (const d of TUNE_DEF) TUNE_BASE[d[1]] = d[2];
@@ -8015,7 +8017,7 @@ function expectedLevel(tMin) {
 
 // バージョン（タイトル画面の右下に小さく出す）。公開するたびに上げる
 // 形：大.中.小（大＝大きな作り直し、中＝新しい要素・調整、小＝不具合の直しだけ）
-const GAME_VERSION = '1.1.2';
+const GAME_VERSION = '1.1.5';
 const TEXT = {
   title: LX('ネクロ・アルケミア'),
   sub: 'NECRO ALCHEMIA',
@@ -9659,7 +9661,7 @@ const UNDEAD_HP = 0.5, UNDEAD_ATK = 1.1;   // 普通の死者
 // レベルによる守り・力の伸びは、普通の死者には一部しか掛からない（群れだけで押し切れないように）
 const ORD_LV_SHARE = 0.4;
 function isOrdinary(u) { return u.kind !== 'syn' && !u.isBoss && !u.mid && !u.unique; }
-const SYNTH_HP = 4.3, SYNTH_ATK = 3.8;     // 合成体
+const SYNTH_HP = 4.3, SYNTH_ATK = 2.66;    // 合成体（攻撃は v73 でユーザーの指示により 3.8→2.66：3割下げた）
 function hpScale(g) { return 1 + 0.12 * (g - 1); }
 function atkScale(g) { return 1 + 0.08 * (g - 1); }
 
@@ -9710,9 +9712,9 @@ function computeStats(u) {
   const sg = u.team === ENEMY && (u.isBoss || u.mid) && u.gPow ? u.gPow : u.g;
   u.mhp = Math.round(hp * hpScale(sg));
   u.atk = atk * atkScale(sg);
-  if (u.team === ENEMY && u.isBoss) { u.mhp = Math.round(u.mhp * (b.hpMul || BOSS_ENEMY_HP[b.tier || 1])); u.atk *= BOSS_ENEMY_ATK[b.tier || 1]; }
+  if (u.team === ENEMY && u.isBoss) { u.mhp = Math.round(u.mhp * (b.hpMul || BOSS_ENEMY_HP[b.tier || 1]) * TU.boss_hp); u.atk *= BOSS_ENEMY_ATK[b.tier || 1]; }
   if (u.mid) {
-    if (u.team === ENEMY) { u.mhp = Math.round((b.hp * 3 + 150) * hpScale(sg) * MID_HP); u.atk *= MID_ATK; }
+    if (u.team === ENEMY) { u.mhp = Math.round((b.hp * 3 + 150) * hpScale(sg) * MID_HP * TU.boss_hp); u.atk *= MID_ATK; }
     else { u.mhp = Math.round(u.mhp * MID_ALLY_HP); u.atk *= MID_ALLY_ATK; }
   }
   u.spd = spd;
@@ -9982,6 +9984,7 @@ function damage(t, amt, src) {
   if (t.air > 0 || t.popT > 0) return;
   if (t.immortal) { t.flash = 0.05; return; } // 死神は倒れない
   if (t.team === ALLY) { amt /= isOrdinary(t) ? 1 + (necroGuard() - 1) * ORD_LV_SHARE : necroGuard(); if (G.lead) amt /= 1 + TU.lead_bonus * G.lead; amt /= pathGuard(t); }
+  if (t.team === ALLY && src && src.team === ENEMY && (src.isBoss || src.mid)) amt *= TU.boss_unit_atk;   // ボス・中ボスは兵に重い（ネクロマンサーへの傷は変えない）
   if (t.tr && t.tr.armor) amt *= 1 - t.tr.armor;
   if (src && src.tr && src.team === ALLY && !src.dead) {
     const tr = src.tr;
