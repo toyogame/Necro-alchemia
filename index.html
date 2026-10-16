@@ -37,6 +37,57 @@ html,body{margin:0;height:100%;background:var(--bg);overflow:hidden;color:var(--
 canvas#game{position:fixed;left:0;top:0;image-rendering:pixelated;image-rendering:crisp-edges;display:block}
 #vignette{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 46%,rgba(0,0,0,0) 48%,rgba(5,3,10,.55) 85%,rgba(3,2,6,.85) 100%)}
 #hurtfx{position:fixed;inset:0;pointer-events:none;box-shadow:inset 0 0 90px 24px rgba(255,40,40,.35);opacity:0;transition:opacity .25s;will-change:opacity}
+/* ボス・中ボスを倒したときの演出（08_bossfx.js） */
+#kfxdark{position:fixed;inset:0;pointer-events:none;opacity:0;background:radial-gradient(ellipse at 50% 44%,rgba(0,0,0,0) 26%,rgba(4,2,8,.7) 70%,rgba(2,1,4,.95) 100%)}
+#kfxflash{position:fixed;inset:0;pointer-events:none;opacity:0;background:#fffbea}
+#kfxflash.gold{background:radial-gradient(circle at 50% 45%,#fff8dc,#ffd36e 55%,#b07818)}
+.kfxbar{position:fixed;left:0;right:0;height:var(--kfxbar,0px);background:#000;pointer-events:none}
+.kfxbar.t{top:0}.kfxbar.b{bottom:0}
+#banners.kchide{visibility:hidden}
+#kfxblack{position:fixed;inset:0;pointer-events:none;opacity:0;background:#000}
+body.triumph #hud>:not(#killcard),body.triumph #touch,body.triumph #joy{opacity:0!important;transition:opacity .45s;pointer-events:none!important}
+#killcard.ttr{top:calc(24% + var(--safe-t))}
+#killcard.ttr .kc-in{padding:14px 64px 16px;background:linear-gradient(90deg,transparent,rgba(8,14,10,.82) 18%,rgba(8,14,10,.82) 82%,transparent)}
+#killcard.ttr .kc-in::before{content:'';position:absolute;left:50%;top:50%;width:min(560px,130vw);height:240px;margin:-120px 0 0 max(-280px,-65vw);background:radial-gradient(ellipse,rgba(150,255,190,.35),rgba(255,210,110,.14) 45%,transparent 70%);animation:kcglow 1.8s ease-out both;z-index:-1}
+#killcard.ttr .kc-l{font-size:13px;letter-spacing:6px;color:#c8ffd8;text-shadow:0 0 6px rgba(120,255,170,.8),1px 1px 0 #000}
+#killcard.ttr .kc-l i{width:80px;background:linear-gradient(90deg,transparent,#9dffb8)}
+#killcard.ttr .kc-n{font-size:min(54px,14vw);letter-spacing:14px;padding-left:14px;color:transparent;text-shadow:none;background:linear-gradient(100deg,#ffcf5e 0%,#ffcf5e 40%,#fffbe8 50%,#ffcf5e 60%,#ffcf5e 100%) 0 0/300% 100%;-webkit-background-clip:text;background-clip:text;filter:drop-shadow(3px 3px 0 #000) drop-shadow(0 0 14px rgba(255,200,90,.8));animation:kcbig .8s cubic-bezier(.2,1.4,.4,1) both,kcshine 1.8s .6s ease-in-out both}
+#killcard.ttr .kc-s{font-size:12px;animation-delay:.8s}
+html[lang=en] #killcard.ttr .kc-n{letter-spacing:4px;padding-left:4px}
+.res-title.win{animation:reswin 1.1s ease-out both}
+@keyframes reswin{0%{opacity:0;transform:scale(1.5);letter-spacing:20px;text-shadow:0 0 30px rgba(255,220,120,1)}100%{opacity:1;transform:none}}
+#killcard{position:absolute;left:0;right:0;top:calc(27% + var(--safe-t));display:none;justify-content:center;pointer-events:none;text-align:center}
+#killcard.on{display:flex}
+#killcard .kc-in{position:relative;display:flex;flex-direction:column;align-items:center;padding:8px 46px 10px;max-width:96vw;background:linear-gradient(90deg,transparent,rgba(10,6,14,.86) 18%,rgba(10,6,14,.86) 82%,transparent);animation:kcopen .3s ease-out both}
+#killcard .kc-l{display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:4px;color:#ffe6a0;text-shadow:0 0 6px rgba(255,200,90,.8),1px 1px 0 #000;white-space:nowrap}
+#killcard .kc-l i{display:block;width:54px;height:2px;background:linear-gradient(90deg,transparent,#ffd36e);animation:kcline .5s .1s ease-out both}
+#killcard .kc-l i:last-child{transform:scaleX(-1)}
+#killcard .kc-n{font-size:min(30px,8.4vw);font-weight:bold;letter-spacing:3px;line-height:1.2;color:var(--gold);text-shadow:3px 3px 0 #000,0 0 14px rgba(255,190,80,.7);margin-top:2px;text-wrap:balance;animation:kcname .45s .05s cubic-bezier(.2,1.4,.4,1) both}
+#killcard .kc-s{font-size:11px;color:var(--bone);margin-top:4px;text-shadow:1px 1px 0 #000;animation:kcsub .4s .35s ease-out both}
+#killcard.t3 .kc-in{padding:12px 60px 14px}
+#killcard.t3 .kc-in::before{content:'';position:absolute;left:50%;top:50%;width:min(520px,120vw);height:220px;margin:-110px 0 0 max(-260px,-60vw);background:radial-gradient(ellipse,rgba(255,210,110,.45),rgba(255,160,60,.12) 45%,transparent 70%);animation:kcglow 1.6s ease-out both;z-index:-1}
+#killcard.t3 .kc-l{font-size:14px;letter-spacing:6px}
+#killcard.t3 .kc-l i{width:80px}
+#killcard.t3 .kc-n{font-size:min(42px,10.5vw);letter-spacing:5px;color:transparent;text-shadow:none;background:linear-gradient(100deg,#ffcf5e 0%,#ffcf5e 40%,#fffbe8 50%,#ffcf5e 60%,#ffcf5e 100%) 0 0/300% 100%;-webkit-background-clip:text;background-clip:text;filter:drop-shadow(3px 3px 0 #000) drop-shadow(0 0 12px rgba(255,190,80,.75));animation:kcbig .6s cubic-bezier(.2,1.5,.4,1) both,kcshine 1.6s .5s ease-in-out both}
+#killcard.t3 .kc-s{font-size:12px;animation-delay:.7s}
+#killcard.out .kc-in{animation:kcout .4s ease-in both}
+#killcard.paused,#killcard.paused *,#killcard.paused .kc-in::before{animation-play-state:paused!important}
+html[lang=en] #killcard .kc-l{letter-spacing:3px}
+html[lang=en] #killcard .kc-n,html[lang=en] #killcard.t3 .kc-n{letter-spacing:1px}
+@keyframes kcopen{from{transform:scaleY(0);opacity:0}to{transform:none;opacity:1}}
+@keyframes kcline{from{width:0;opacity:0}}
+@keyframes kcname{from{transform:scale(1.7);opacity:0;letter-spacing:14px}to{transform:none;opacity:1}}
+@keyframes kcbig{0%{transform:scale(2.4);opacity:0;letter-spacing:22px}60%{opacity:1}to{transform:none;opacity:1}}
+@keyframes kcshine{from{background-position:100% 0}to{background-position:0 0}}
+@keyframes kcsub{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@keyframes kcglow{0%{transform:scale(.2);opacity:0}25%{opacity:1}to{transform:scale(1);opacity:.55}}
+@keyframes kcout{to{opacity:0;transform:translateY(-10px)}}
+.bossbar.slain{box-shadow:0 0 0 1px #c9a040;animation:bbslain .8s ease-out}
+.bossbar.slain .nm{color:#ffe6a0}
+.bossbar.slain .nm .kc{color:var(--gold);font-weight:bold;letter-spacing:2px;animation:bbkc .6s ease-out}
+.bossbar.slain .bar i{width:0;background:#ffd36e}
+@keyframes bbslain{0%{background:rgba(255,220,120,.85)}100%{background:rgba(10,6,12,.8)}}
+@keyframes bbkc{0%{transform:scale(1.8);opacity:0}100%{transform:none;opacity:1}}
 /* 軽量：メニューの後ろをぼかさない（スマホではぼかしがとても重い） */
 body.lite .screen{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(6,4,10,.84)}
 #touch{position:fixed;inset:0}
@@ -1046,6 +1097,9 @@ body.demo #banners{top:calc(33% + var(--safe-t))}
 <canvas id="game"></canvas>
 <div id="vignette"></div>
 <div id="hurtfx"></div>
+<div id="kfxdark"></div>
+<div class="kfxbar t"></div><div class="kfxbar b"></div>
+<div id="kfxflash"></div>
 <div id="touch"></div>
 <div id="joy" class="hidden"><div id="joyk"></div></div>
 
@@ -1062,6 +1116,7 @@ body.demo #banners{top:calc(33% + var(--safe-t))}
   <div id="timer">00:00</div><div id="threat" style="display:none"></div>
   <div id="bossbars"></div>
   <div id="banners"></div>
+  <div id="killcard"></div>
   <div id="siteprompt" class="hidden"></div>
   <div id="edgeinds"></div>
   <div id="hint"></div>
@@ -1069,6 +1124,7 @@ body.demo #banners{top:calc(33% + var(--safe-t))}
   <button id="returnbtn" class="hidden">凱旋する</button>
 </div>
 
+<div id="kfxblack"></div>
 <div id="title" class="screen hidden"></div>
 <div id="levelup" class="screen hidden"></div>
 <div id="pot" class="screen hidden"></div>
@@ -2261,6 +2317,11 @@ Object.assign(EN, {
   "エラー: ": "Error: ",
   "{0}、作り方が出る": "{0} to see how to make it",
   "{0}、作り方と今の兵で作れるかが出る": "{0} to see how to make it and whether you can make it now",
+  "勝利": "Victory",
+  "いつでも凱旋できる": "You may return in triumph anytime",
+  "大ボス討伐": "Great Boss Slain",
+  "討伐": "SLAIN",
+  "{0} を戦い抜いた": "Survived {0}",
 });
 
 // ==== 01_util.js ====
@@ -7943,15 +8004,18 @@ const FOE_UNLOCKS = [
 function foeUnlocked(k) { return !!(META.foes && META.foes[k]); }
 
 // 想定レベル曲線（分 → レベル）
+// 想定レベル：その時間にネクロマンサーが何Lvくらいか（敵・ボスの格の基準）。15分（勇者）で Lv50 を想定（v69 で 37→50 に引き上げ）
+//   5分 12・10分 28・15分 50。15分を過ぎた延長戦は1分ごとに +3.2
 function expectedLevel(tMin) {
-  if (tMin <= 5) return 1 + 1.8 * tMin;
-  if (tMin <= 10) return 10 + 3 * (tMin - 5);
-  return 25 + 2.4 * (tMin - 10);
+  if (tMin <= 5) return 1 + 2.2 * tMin;
+  if (tMin <= 10) return 12 + 3.2 * (tMin - 5);
+  if (tMin <= 15) return 28 + 4.4 * (tMin - 10);
+  return 50 + 3.2 * (tMin - 15);
 }
 
 // バージョン（タイトル画面の右下に小さく出す）。公開するたびに上げる
 // 形：大.中.小（大＝大きな作り直し、中＝新しい要素・調整、小＝不具合の直しだけ）
-const GAME_VERSION = '1.0.0';
+const GAME_VERSION = '1.1.2';
 const TEXT = {
   title: LX('ネクロ・アルケミア'),
   sub: 'NECRO ALCHEMIA',
@@ -8982,12 +9046,40 @@ function sfx(name, arg) {
     case 'lose': [330, 262, 196, 131].forEach((f, i) => tone(f, 0.4, 'sawtooth', 0.05, 0.9, i * 0.18)); break;
     case 'heal': [660, 880, 1100].forEach((f, i) => tone(f, 0.12, 'sine', 0.05, 1, i * 0.05)); break;
     case 'ui': tone(600, 0.04, 'square', 0.03); break;
+    // ---- ボス・中ボスを倒したとき（08_bossfx.js） ----
+    // 中ボス：鈍い手応え＋明るい2音（短く。戦いのテンポを止めない）
+    case 'midKill': noise(0.2, 0.11, 900); tone(110, 0.22, 'square', 0.05, 0.5); tone(784, 0.16, 'triangle', 0.05, 1, 0.05); tone(1174.66, 0.3, 'sine', 0.045, 1, 0.12); break;
+    // ボス：重い爆発 → 駆け上がる音 → ニ長調の和音で締める（暗い曲の中で、勝ったところだけ明るく）
+    case 'bossKill':
+      noise(0.7, 0.18, 600); tone(55, 0.7, 'sine', 0.15, 0.5);
+      [293.66, 369.99, 440, 587.33].forEach((f, i) => tone(f, 0.2, 'triangle', 0.06, 1, 0.12 + i * 0.07));
+      [587.33, 739.99, 880].forEach((f) => { tone(f, 1.1, 'triangle', 0.045, 1, 0.42); tone(f * 2, 0.8, 'sine', 0.014, 1, 0.42); });
+      break;
+    // 大ボス：倒れた瞬間の割れる音と、低く長いうなり
+    case 'bigHit': noise(0.35, 0.22, 3200); tone(70, 1.8, 'sawtooth', 0.09, 0.45); tone(140, 1.2, 'square', 0.03, 0.5, 0.05); break;
+    // 大ボス：体が弾ける（だんだん高く・大きく）
+    case 'kfxPop': if (sfxGate(name, 60)) { const p = arg || 0; noise(0.18, 0.06 + 0.07 * p, 1200 + 1800 * p); tone(220 + 300 * p, 0.12, 'square', 0.025, 0.6); } break;
+    // 凱旋：鐘のような上がりの音から、ニ長調の和音を長く鳴らす
+    case 'triumph':
+      noise(0.8, 0.06, 2600);
+      [[0, 293.66], [0.16, 369.99], [0.32, 440], [0.5, 587.33], [0.72, 739.99], [0.94, 880]].forEach(([d, f]) => { tone(f, 0.5, 'triangle', 0.06, 1, d); tone(f * 2.003, 0.6, 'sine', 0.02, 1, d); });
+      [293.66, 369.99, 440, 587.33, 739.99].forEach((f, i) => { tone(f, 3.2, 'triangle', 0.04, 1, 1.25 + i * 0.04); tone(f * 0.5, 3.0, 'sine', 0.03, 1, 1.25); });
+      tone(146.83, 3.4, 'sawtooth', 0.03, 1, 1.25); tone(73.42, 3.4, 'sine', 0.08, 1, 1.25);
+      break;
+    // 大ボス：最後の大爆発と、長めの勝利の音
+    case 'bigKill':
+      noise(1.4, 0.26, 420); noise(0.4, 0.12, 4000); tone(40, 1.6, 'sine', 0.2, 0.6); tone(82, 1.2, 'sawtooth', 0.06, 0.5);
+      [[0.35, 293.66, 0.16], [0.52, 293.66, 0.12], [0.66, 440, 0.18], [0.86, 587.33, 0.42]].forEach(([d, f, l]) => { tone(f, l, 'triangle', 0.075, 1, d); tone(f / 2, l, 'square', 0.02, 1, d); });
+      [587.33, 739.99, 880, 1174.66].forEach((f, i) => { tone(f, 2.0, 'triangle', 0.045, 1, 1.25 + i * 0.03); tone(f * 2.003, 1.4, 'sine', 0.012, 1, 1.25 + i * 0.03); });
+      tone(146.83, 2.2, 'sawtooth', 0.035, 1, 1.25);
+      break;
   }
 }
 
 // ---------- 音楽（その場で合成する暗い環境音楽） ----------
 // 低いうなり（ドローン）の上に、ニ短調の鐘のような音がまばらに鳴る。ボス戦では太鼓が加わる
-const BGM = { on: true, started: false, gain: null, drone: null, timer: null, step: 0, next: 0, level: 0, target: 0 };
+// duck：0〜1。大ボスを倒した演出の間だけ曲を下げる
+const BGM = { on: true, started: false, gain: null, drone: null, timer: null, step: 0, next: 0, level: 0, target: 0, duck: 0 };
 const BGM_SCALE = [146.83, 174.61, 196.0, 220.0, 261.63, 293.66, 349.23, 392.0, 440.0]; // D F G A C D F G A
 
 function bgmStart() {
@@ -9040,8 +9132,8 @@ function bgmDrum(t, vol) {
 function bgmTick() {
   const c = AU.ctx;
   if (!c || c.state !== 'running') return;
-  const want = (BGM.on && !document.hidden) ? [0.35, 0.8, 1.0][BGM.target] : 0;
-  BGM.level += (want - BGM.level) * 0.08;
+  const want = (BGM.on && !document.hidden) ? [0.35, 0.8, 1.0][BGM.target] * (1 - (BGM.duck || 0)) : 0;
+  BGM.level += (want - BGM.level) * (BGM.duck && want < BGM.level ? 0.35 : 0.08);   // 下げるときは速く、戻すときはゆっくり
   BGM.gain.gain.setTargetAtTime(BGM.level * 0.55, c.currentTime, 0.3);
   if (BGM.level < 0.02) { BGM.next = c.currentTime + 0.1; return; }
   const beat = BGM.target === 2 ? 0.32 : 0.42;
@@ -9274,6 +9366,17 @@ function updateGraveyards(dt) {
 // 頭脳はまとめて0.15秒ごとに状況を読み、各兵は索敵のたびにそれを参照する（兵ごとの重い計算を避ける）
 
 function leadLv() { return G.lead || 0; }
+// 画面の中か（あなたを中心にした見えている範囲。m は縁からの余白、負なら画面の外へその分まで）
+// 軍勢は統率力にかかわらず、画面の外の敵へは向かわない（見えない所で戦って数が減らないように）
+function inArmyView(x, y, m) {
+  const N = G.necro;
+  const hx = Math.max(90, (R.W || 270) / 2 - m), hy = Math.max(90, (R.H || 270) / 2 - m);
+  return Math.abs(x - N.x) < hx && Math.abs(y - (N.y - 6)) < hy;
+}
+const VIEW_M = 6;          // ふつうの敵：体が画面に入っていること
+const VIEW_M_NEAR = -26;   // あなたに迫る敵・ボス：画面の縁から少し外まで
+const VIEW_M_SHOOT = -80;  // 射手・術師：画面のすぐ外から撃ってくるので、そこまでは追う（届く所から撃たれ放題にならないように）
+function foeViewM(e) { return e.range > 40 ? VIEW_M_SHOOT : VIEW_M; }
 // 陣の大きさ（兵が多いほど広い）
 function armyRadius() { return 22 + Math.sqrt(G.allyCount || 0) * 7.5; }
 function isRangedAlly(u) { return unitRange(u) > 40; }
@@ -9482,7 +9585,7 @@ function retargetLed(u, L) {
     if (dN2 < gr * gr) {
       let best = null, bd = 1e18;
       for (const e of B.danger) {
-        if (e.dead || e.air > 0) continue;
+        if (e.dead || e.air > 0 || !inArmyView(e.x, e.y, e.range > 40 || e === G.necroAttacker ? VIEW_M_SHOOT : VIEW_M_NEAR)) continue;
         if (u.guardOf !== e && (e.guardN || 0) >= e.guardQ) continue;
         const d = dist2(u.x, u.y, e.x, e.y);
         if (d < bd) { bd = d; best = e; }
@@ -9495,7 +9598,7 @@ function retargetLed(u, L) {
   }
   u.guardOf = null;
   // 将狙い
-  if (L >= 3 && B.boss && isAlive(B.boss) && isHunter(u) && dist2(B.boss.x, B.boss.y, N.x, N.y) < 440 * 440) {
+  if (L >= 3 && B.boss && isAlive(B.boss) && isHunter(u) && inArmyView(B.boss.x, B.boss.y, VIEW_M_NEAR)) {
     if (u.tgt !== B.boss) u.markT = 0.7;
     u.tgt = B.boss; u.hunt = true; return;
   }
@@ -9504,7 +9607,7 @@ function retargetLed(u, L) {
   // 近衛はあなたのそばを離れない
   const bodyguard = !B.ring && u.fa < 0.26 && !isRangedAlly(u);
   const leashM = bodyguard ? R * 0.5 + 45 : (R + 80) * M.aggro, leashR = bodyguard ? R * 0.5 + 45 : (R + 140) * M.aggro;
-  if (dN2 > (leashR + 70) * (leashR + 70)) { u.tgt = null; return; }
+  if (dN2 > (leashR + 70) * (leashR + 70) || !inArmyView(u.x, u.y, -60)) { u.tgt = null; return; }
   const sl = formationSlot(u);
   const ranged = isRangedAlly(u);
   const reach = unitRange(u) + u.size * 0.5;
@@ -9513,7 +9616,7 @@ function retargetLed(u, L) {
     if (e.team !== ENEMY || e.dead || e.air > 0) return;
     const lsh = e.range > 40 ? leashR : leashM;
     const dn2 = dist2(e.x, e.y, N.x, N.y);
-    if (dn2 > lsh * lsh) return;
+    if (dn2 > lsh * lsh || !inArmyView(e.x, e.y, foeViewM(e))) return;
     const d2 = dist2(u.x, u.y, e.x, e.y);
     if (d2 > er * er) return;
     const d = Math.sqrt(d2);
@@ -9603,11 +9706,13 @@ function computeStats(u) {
     if (ar) { hp *= ar.hp; atk *= ar.atk; spd *= ar.spd; cd /= ar.as; }
   }
   if (u.kind === 'syn' || (u.isBoss && b.phase)) u.phase = !!b.phase;
-  u.mhp = Math.round(hp * hpScale(u.g));
-  u.atk = atk * atkScale(u.g);
+  // 敵のボス・中ボスは、表示のLvとは別の「強さのLv」（gPow）で能力が決まる
+  const sg = u.team === ENEMY && (u.isBoss || u.mid) && u.gPow ? u.gPow : u.g;
+  u.mhp = Math.round(hp * hpScale(sg));
+  u.atk = atk * atkScale(sg);
   if (u.team === ENEMY && u.isBoss) { u.mhp = Math.round(u.mhp * (b.hpMul || BOSS_ENEMY_HP[b.tier || 1])); u.atk *= BOSS_ENEMY_ATK[b.tier || 1]; }
   if (u.mid) {
-    if (u.team === ENEMY) { u.mhp = Math.round((b.hp * 3 + 150) * hpScale(u.g) * MID_HP); u.atk *= MID_ATK; }
+    if (u.team === ENEMY) { u.mhp = Math.round((b.hp * 3 + 150) * hpScale(sg) * MID_HP); u.atk *= MID_ATK; }
     else { u.mhp = Math.round(u.mhp * MID_ALLY_HP); u.atk *= MID_ALLY_ATK; }
   }
   u.spd = spd;
@@ -9710,19 +9815,25 @@ function spawnEnemy(type, x, y, elite) {
 
 function spawnBoss(key, x, y) {
   const b = BOSSES[key];
+  // Lv（表示・亡骸・合成・配下にしたときの強さ）は想定レベルと同じ（15分の勇者で50。ステージや延長戦でも上乗せしない）
+  // 敵としての強さだけは gPow（想定の2倍・大ボスは2.4倍、ステージ・延長戦の上乗せ込み）で決まる
+  // （v70〜v71 でユーザーの指示により分けた。配下にすると表示の Lv 相応の強さになる）
   const mul = b.tier === 3 ? 2.4 : 2;
   const e = expectedLevel(G.t / 60);
-  const g = Math.max(4, Math.round(e * mul * STAGES[G.stage].gradeMul * (G.endless ? 1.15 : 1)));
-  const u = makeUnit({ team: ENEMY, kind: 'h', type: key, lin: b.lin, g, x, y, form: 'alive' });
+  const gPow = Math.max(4, Math.round(e * STAGES[G.stage].gradeMul * (G.endless ? 1.15 : 1) * mul));
+  const g = Math.max(2, Math.min(gPow, Math.round(e)));
+  const u = makeUnit({ team: ENEMY, kind: 'h', type: key, lin: b.lin, g, gPow, x, y, form: 'alive' });
   G.bossAlive.push(u);
   return u;
 }
 
 // 中ボス：その時間帯の敵の種類から選び、ひと回り大きく強くする
+// Lv はボスと同じく想定レベルまで（強さは gPow：その時間の敵の格×1.5＋2）
 function spawnMid(type, x, y) {
   const t = ETYPES[type];
-  const g = Math.max(3, Math.round(enemyGrade(t.gm) * 1.5) + 2);
-  const u = makeUnit({ team: ENEMY, kind: 'h', type, lin: t.lin, g, elite: true, mid: true, x, y, form: 'alive' });
+  const gPow = Math.max(3, Math.round(enemyGrade(t.gm) * 1.5) + 2);
+  const g = Math.max(2, Math.min(gPow, Math.round(expectedLevel(G.t / 60))));
+  const u = makeUnit({ team: ENEMY, kind: 'h', type, lin: t.lin, g, gPow, elite: true, mid: true, x, y, form: 'alive' });
   G.midAlive.push(u);
   return u;
 }
@@ -9939,7 +10050,7 @@ function onEnemyDeath(u, src) {
   G.stats.kills++;
   if (u.carry) { u.carry.dead = false; u.carry.robbed = false; u.carry.x = u.x; u.carry.y = u.y; G.corpses.push(u.carry); u.carry = null; }
   // 魂
-  let v = 0.5 + u.g * 0.1;
+  let v = 0.5 + (u.gPow || u.g) * 0.1;   // ボスは強さのLvで（倒した手応えに見合う魂）
   if (u.elite) v *= 3;
   if (u.isBoss) v *= 25;
   if (u.mid) v *= 8;
@@ -9965,6 +10076,7 @@ function onEnemyDeath(u, src) {
   const c = addCorpse({ x: u.x, y: u.y, kind: 'h', type: u.type, look: 'e', raiseForm: 'risen', lin: u.lin, g: u.g, elite: u.elite, boss: u.isBoss, mid: !!u.mid,
     decay: keep, decayMax: keep });
   if (u.type === 'hero') { G.heroCorpse = c; c.decay = c.decayMax = 75; }
+  if (u.isBoss) killFxCorpse(u, c);   // 大ボスの演出中は亡骸を隠して、光る体を描く
   // 倒したボス・中ボスの亡骸は、画面の外でも方向を出す（倒した瞬間に見失わないように）
   if ((u.isBoss || u.mid) && u.type !== 'god') { c.t0 = G.t; c.bossName = u.mid ? (MIDBOSS[u.type] ? MIDBOSS[u.type].name : ETYPES[u.type].name) : BOSSES[u.type].name; (G.bossCorpses = G.bossCorpses || []).push(c); }
   // 神の屍：朽ちず、焼けず、運び去られない。ここで止まって1分間ネクロマンスすると死神になる
@@ -10234,11 +10346,15 @@ function retargetAlly(u) {
   const L = anc === N ? leadLv() : 0;
   if (L > 0) { retargetLed(u, L); return; }
   if (dist2(u.x, u.y, anc.x, anc.y) > 310 * 310) { u.tgt = null; return; }
+  // あなたについている兵は、画面の外の敵へは向かわない（07_brain.js の inArmyView）。外へ出すぎた兵は戻る
+  const atN = anc === N;
+  if (atN && !inArmyView(u.x, u.y, -60)) { u.tgt = null; return; }
   let best = null, bd = er * er;
   G.tgrid[ENEMY].query(u.x, u.y, er, (e) => {
     if (e.team !== ENEMY || e.dead || e.air > 0) return;
     const lsh = e.range > 40 ? leashR : leashM;
     if (dist2(e.x, e.y, anc.x, anc.y) > lsh * lsh) return;
+    if (atN && !inArmyView(e.x, e.y, foeViewM(e))) return;
     const d = dist2(u.x, u.y, e.x, e.y);
     if (d < bd) { bd = d; best = e; }
   });
@@ -11014,7 +11130,7 @@ function updateBossAbility(u, dt) {
       for (let i = 0; i < n; i++) {
         const a = rng() * TAU;
         const x = u.x + Math.cos(a) * 18, y = u.y + Math.sin(a) * 14;
-        const g = Math.max(1, Math.round(u.g * 0.45));
+        const g = Math.max(1, Math.round((u.team === ENEMY && u.gPow ? u.gPow : u.g) * 0.45));   // 敵の獣使いは強さのLvから
         const w = u.team === ENEMY
           ? makeUnit({ team: ENEMY, kind: 'h', type: 'wolf', lin: 'bu', g, x, y, form: 'alive' })
           : makeUnit({ team: ALLY, kind: 'h', type: 'wolf', lin: 'bu', g, x, y, form: 'risen' });
@@ -11196,34 +11312,37 @@ function heroRally(u) {
 }
 
 function onBossDeath(u) {
+  const tier = killTier(u);   // 演出の段階（08_bossfx.js）。状態を変える前に決める
+  if (tier >= 2 && !(G.kfx && G.kfx.seq && G.kfx.seq.tier >= tier)) UI.killCardReserve();   // この後の知らせは討伐の札の後に出す
   G.stats.bossKills++;
   G.bossAlive = G.bossAlive.filter((b) => b !== u);
   G.discovered['bossKill_' + u.type] = true;
-  G.shake = 6;
-  sfx('raiseBig');
+  if (!tier) { G.shake = 6; sfx('raiseBig'); }
   if (BOSS_POOL[1].indexOf(u.type) >= 0) unlockFoes('boss1');
   if (u.type === 'giant') unlockFoes('giant');
   if (u.type === 'hero') {
     unlockFoes('win');
     G.heroDown = true;
-    if (stageFinal() === 'hero') heroVictory();
-    else {
+    if (stageFinal() === 'hero') {
+      heroVictory(!!tier);
+      killFxStart(u, tier, { label: LX('勝利'), sub: LX('いつでも凱旋できる') });
+    } else {
       // 聖都：勇者のあとに神が降りる
       G.godAt = G.t + 9;
-      banner(LX('勇者を討伐した'), LX('…空が裂ける。神が降りてくる'), 'win');
-      sfx('win');
+      if (tier) killFxStart(u, tier, { sub: LX('…空が裂ける。神が降りてくる') });
+      else { banner(LX('勇者を討伐した'), LX('…空が裂ける。神が降りてくる'), 'win'); sfx('win'); }
     }
   } else if (u.type === 'god') {
     G.rush = true;
     G.rushStart = G.t;
     G.nextRushBoss = G.t + 20;
     G.nextRushMid = G.t + 6;
-    banner(LX('神を討伐した'), LX('屍の上で1分止まり、死神にせよ'), 'win');
-    setTimeout(() => { if (G && G.rush) banner(LX('総攻撃'), LX('儀式中は被ダメージ半分。離れても続きから'), 'enemy'); }, 3000);
-    sfx('boss');
-    G.shake = 10;
-  } else if (!G.reapWave) {
-    banner(LT`${BOSSES[u.type].name}を討伐`, LX('亡骸を蘇らせれば配下にできる'), 'win');
+    // 総攻撃の知らせは、討伐の表示が終わってから
+    const rushNote = () => { if (G && G.rush) banner(LX('総攻撃'), LX('儀式中は被ダメージ半分。離れても続きから'), 'enemy'); };
+    if (tier) killFxStart(u, tier, { sub: LX('屍の上で1分止まり、死神にせよ'), then: rushNote });
+    else { banner(LX('神を討伐した'), LX('屍の上で1分止まり、死神にせよ'), 'win'); setTimeout(rushNote, 3000); sfx('boss'); G.shake = 10; }
+  } else if (tier) {
+    killFxStart(u, tier);
   }
 }
 
@@ -11231,16 +11350,20 @@ function onMidDeath(u) {
   G.midAlive = G.midAlive.filter((b) => b !== u);
   G.stats.midKills = (G.stats.midKills || 0) + 1;
   if (!G.reapWave) banner(LT`${MIDBOSS[u.type].name}を討伐`, LX('亡骸を蘇らせれば配下にできる'), 'win');
+  killFxStart(u, killTier(u));
 }
 
 // 古戦場：勇者を倒せばクリア（亡骸を蘇らせれば勇者も配下になる）。このまま続ければ延長戦
-function heroVictory() {
+// quiet：討伐の演出（08_bossfx.js）が知らせと音を出すときは、ここでは出さない
+function heroVictory(quiet) {
   G.victory = true;
   G.cleared = true;
   G.clearT = G.t;
-  banner(LX('勇者を討伐した'), LX('勝利。いつでも凱旋できる'), 'win');
-  sfx('win');
-  G.shake = 10;
+  if (!quiet) {
+    banner(LX('勇者を討伐した'), LX('勝利。いつでも凱旋できる'), 'win');
+    sfx('win');
+    G.shake = 10;
+  }
   UI.showReturn(true);
   G.endless = true;
   G.endlessStart = G.t;
@@ -11554,6 +11677,433 @@ function updateBossChase(u, dt) {
   addTele({ x: N.x, y: N.y, r: 22, t: 0.7, dmg: u.atk * 0.5, necro: 0.19, holy: true, src: u });
   c.t = 0.45;
   if (--c.n <= 0) u.chase = null;
+}
+
+// ==== 08_bossfx.js ====
+// =========================================================
+// ボス・中ボスを倒したときの演出（3段階）
+//   1 中ボス：その場で弾ける光と音。戦いは止めない（ほんの一瞬の手応えだけ）
+//   2 ボス  ：短いスロー・光の柱と衝撃の輪・画面の中央に「ボス討伐」
+//   3 大ボス：節目に出る巨人・黒竜・勇者・神。数秒のスローでカメラが倒れたボスへ寄り、
+//             体が光って連続で爆ぜる → 大爆発 → 大きな「大ボス討伐」
+//             延長戦・総攻撃でくり返し出るものは 2 として扱う（節目ではないので）
+// 演出の時間は実際の時間で数える（ゲームの時間はこの間だけ遅くなる：killFxTick の戻り値）
+// 光の粒・輪もここで実際の時間で動かす（スローの間も演出の光はふつうの速さで動く）
+// =========================================================
+
+// 段階ごとの長さ（秒・実際の時間）
+const KFX_T = {
+  1: { stop: 0.06, slow: 0.2, end: 0.06 },
+  2: { stop: 0.09, slow: 0.3, slowEnd: 0.45, end: 0.85, card: 0.1, cardDur: 2.7 },
+  3: { stop: 0.16, slow: 0.12, boom: 2.0, after: 0.3, end: 3.1, card: 2.0, cardDur: 3.6 },
+};
+
+function killTier(u) {
+  if (!u || u.team !== ENEMY) return 0;
+  if (G.reapWave || G.demo) return 0;   // 死神の誕生で一掃されるとき・合成の見本では出さない
+  if (u.mid) return 1;
+  if (!u.isBoss) return 0;
+  const b = BOSSES[u.type];
+  if (!b) return 2;
+  if (u.type === 'god' || u.type === 'hero') return 3;
+  if (b.huge && !G.endless && !G.rush) return 3;
+  return 2;
+}
+
+function kfxState() {
+  if (!G.kfx) G.kfx = { seq: null, parts: [], rings: [], beams: [] };
+  return G.kfx;
+}
+
+// 倒した瞬間に呼ぶ。opt：{ label, sub, then }（then は演出が終わってから行うこと）
+function killFxStart(u, tier, opt) {
+  if (!tier) return;
+  opt = opt || {};
+  const K = kfxState();
+  const name = u.mid ? (MIDBOSS[u.type] ? MIDBOSS[u.type].name : ETYPES[u.type].name) : BOSSES[u.type].name;
+  UI.slainBar(u, name, tier);
+  // 大きい演出の最中に別のボスが倒れたら、その場の光と音だけ（演出を重ねない）
+  const cur = K.seq;
+  const busy = cur && cur.tier >= tier && tier > 1;
+  if (busy || tier === 1) {
+    kfxBurst(u.x, u.y - kfxBodyH(u) * 0.45, tier === 1 ? 1 : 2);
+    sfx(tier === 1 ? 'midKill' : 'bossKill');
+    G.shake = Math.max(G.shake, tier === 1 ? 4 : 8);
+    if (tier === 1 && !cur) K.seq = { tier: 1, t: 0, x: u.x, y: u.y };
+    // 重なったときは、ふつうの知らせ（上のバナー）で伝える
+    if (busy) { UI.banner(LT`${name}を討伐`, opt.sub === undefined ? LX('亡骸を蘇らせれば配下にできる') : opt.sub, 'win'); if (opt.then) cur.then = (cur.then || []).concat(opt.then); }
+    return;
+  }
+  if (cur && cur.then) for (const f of cur.then) f();   // 前の演出の続きは先に済ませる
+  const s = K.seq = {
+    tier, t: 0, x: u.x, y: u.y, name,
+    label: opt.label || (tier === 3 ? LX('大ボス討伐') : JE('ボス討伐', 'Boss Slain')),
+    sub: opt.sub === undefined ? LX('亡骸を蘇らせれば配下にできる') : opt.sub,
+    then: opt.then ? [opt.then] : null,
+    ghost: tier === 3 ? { spr: u.spr, scale: u.scale || 1, flip: u.face < 0, h: kfxBodyH(u) } : null,
+    corpse: null, boomed: false, carded: false, nextPop: 0.3,
+  };
+  if (tier === 2) {
+    kfxBurst(u.x, u.y - kfxBodyH(u) * 0.45, 2);
+    sfx('bossKill');
+    G.shake = Math.max(G.shake, 8);
+    KFX.flash(0.45, 'gold');
+  } else {
+    sfx('bigHit');
+    KFX.flash(0.6, 'white');
+    G.shake = Math.max(G.shake, 6);
+    BGM.duck = 0.85;
+    for (let i = 0; i < 18; i++) kfxPart(s.x + vrng.range(-6, 6), s.y - vrng.range(4, s.ghost.h), vrng.range(-90, 90), vrng.range(-120, -20), 0.5, 'spark', [255, 250, 220], 1, 40);
+  }
+}
+
+function kfxBodyH(u) { const s = SPR[u.spr]; return Math.round((s ? s.h : 16) * (u.scale || 1)); }
+
+// 倒れたボスの亡骸（大ボスの演出中は、光る体を代わりに描くので隠しておく）
+function killFxCorpse(u, c) {
+  const s = G.kfx && G.kfx.seq;
+  if (s && s.ghost && !s.boomed && s.x === u.x && s.y === u.y) { s.corpse = c; c.kfxHide = true; }
+}
+
+// ゲームの時間の進み方（1＝ふつう）。実際の時間 rdt だけ演出を進める
+function killFxTick(rdt) {
+  const K = G.kfx;
+  if (!K) return 1;
+  kfxStepParts(rdt);
+  const s = K.seq;
+  if (!s) return 1;
+  // ネクロマンサーが倒れたら演出は打ち切る
+  if (G.necro.dead) { killFxFinish(true); return 1; }
+  s.t += rdt;
+  const T = KFX_T[s.tier];
+  let scale = 1;
+  if (s.tier === 1) {
+    scale = s.t < T.stop ? T.slow : 1;
+    if (s.t >= T.end) K.seq = null;
+  } else if (s.tier === 2) {
+    if (!s.carded && s.t >= T.card) { s.carded = true; UI.killCard(s); }
+    scale = s.t < T.stop ? 0.04 : s.t < T.slowEnd ? T.slow : s.t < T.end ? lerp(T.slow, 1, (s.t - T.slowEnd) / (T.end - T.slowEnd)) : 1;
+    if (s.t >= T.end) killFxFinish(false);
+  } else {
+    if (s.corpse && s.corpse.dead && !s.boomed) s.ghost = null;   // 演出中に起こされた
+    if (!s.boomed) {
+      scale = s.t < T.stop ? 0.03 : T.slow;
+      // 体のあちこちが光って弾ける（だんだん速く）
+      if (s.t >= s.nextPop && s.t < T.boom - 0.08) {
+        const p = (s.t - 0.3) / (T.boom - 0.3);
+        const h = s.ghost ? s.ghost.h : 24;
+        kfxPop(s.x + vrng.range(-h * 0.4, h * 0.4), s.y - vrng.range(h * 0.1, h * 0.9), p);
+        s.nextPop = s.t + lerp(0.26, 0.07, p);
+      }
+      if (s.t >= T.boom) kfxBoom(s);
+    } else {
+      const a = s.t - T.boom;
+      scale = a < T.after ? 0.25 : lerp(0.25, 1, clamp((s.t - T.boom - T.after) / (T.end - T.boom - T.after), 0, 1));
+      if (a > 0.3 && BGM.duck) BGM.duck = 0;
+      if (s.t >= T.end) killFxFinish(false);
+    }
+  }
+  return scale;
+}
+
+// 大ボス：最後の大爆発
+function kfxBoom(s) {
+  s.boomed = true;
+  if (s.corpse) s.corpse.kfxHide = false;
+  const h = s.ghost ? s.ghost.h : 24;
+  kfxBurst(s.x, s.y - h * 0.45, 3);
+  sfx('bigKill');
+  KFX.flash(0.9, 'white');
+  G.shake = Math.max(G.shake, 14);
+  s.ghost = null;
+  if (!s.carded) { s.carded = true; UI.killCard(s); }
+}
+
+function killFxFinish(cut) {
+  const K = G.kfx;
+  if (!K || !K.seq) return;
+  const s = K.seq;
+  K.seq = null;
+  if (s.corpse) s.corpse.kfxHide = false;
+  BGM.duck = 0;
+  if (cut) UI.killCardClear();
+  if (s.then) for (const f of s.then) f();
+}
+
+// レベルアップの画面を開くのを待つ（大きい演出の途中で画面が覆われないように）
+function killFxHold() {
+  const s = G.kfx && G.kfx.seq;
+  if (!s) return false;
+  if (s.tier === 3) return true;   // カメラが戻りきるまで
+  if (s.tier === 2) return s.t < 0.6;
+  return false;
+}
+
+// カメラ：大ボスのときだけ、倒れた所へ寄って戻る。{ x, y, k }（k＝寄る割合）
+function killFxCam() {
+  const s = G.kfx && G.kfx.seq;
+  if (!s || s.tier !== 3) return null;
+  const T = KFX_T[3];
+  const ease = (v) => { v = clamp(v, 0, 1); return v * v * (3 - 2 * v); };
+  const k = s.t < T.boom + 0.3 ? ease((s.t - 0.05) / 0.55) : 1 - ease((s.t - T.boom - 0.3) / 0.7);
+  return { x: s.x, y: s.y - 10, k };
+}
+
+// 画面の暗さ・黒い帯・光り（0〜1）。DOM 側（KFX.frame）が使う
+function killFxLook() {
+  const s = G && G.kfx && G.kfx.seq;
+  if (!s || s.tier !== 3) return { dark: 0, bars: 0 };
+  const T = KFX_T[3];
+  const up = clamp(s.t / 0.35, 0, 1);
+  const dark = s.boomed ? Math.max(0, 0.55 * (1 - (s.t - T.boom) / 0.25)) : 0.55 * up;
+  const bars = s.t < T.end - 0.45 ? up : clamp((T.end - s.t) / 0.45, 0, 1);
+  return { dark, bars };
+}
+
+// ---- 光の粒・輪・柱 ----
+function kfxPart(x, y, vx, vy, life, spr, rgb, sz, grav) {
+  const K = kfxState();
+  if (K.parts.length > 400) return;
+  K.parts.push({ x, y, vx, vy, life, max: life, spr, rgb, sz: sz || 1, grav: grav || 0 });
+}
+function kfxRing(x, y, vr, life, rgb, w) {
+  kfxState().rings.push({ x, y, r: 4, vr, life, max: life, rgb, w: w || 1 });
+}
+function kfxBeam(x, y, w, h, life, rgb) {
+  kfxState().beams.push({ x, y, w, h, life, max: life, rgb });
+}
+
+// 弾ける光（段階で大きさが変わる）
+function kfxBurst(x, y, tier) {
+  const gold = [255, 214, 110], white = [255, 250, 230], ember = [255, 140, 60], red = [255, 90, 60];
+  if (tier === 1) {
+    kfxRing(x, y + 8, 170, 0.45, [255, 190, 90], 1);
+    for (let i = 0; i < 22; i++) {
+      const a = vrng() * TAU, v = vrng.range(50, 130);
+      kfxPart(x, y, Math.cos(a) * v, Math.sin(a) * v * 0.75 - 30, vrng.range(0.35, 0.6), i % 3 ? 'spark' : 'px2', i % 2 ? gold : ember, 1, 90);
+    }
+    kfxPart(x, y, 0, 0, 0.3, 'glow', [255, 200, 120], 50);
+    return;
+  }
+  const big = tier === 3;
+  kfxRing(x, y + 10, big ? 430 : 270, big ? 0.95 : 0.65, white, 2);
+  kfxRing(x, y + 10, big ? 330 : 200, big ? 1.05 : 0.75, gold, 1);
+  kfxRing(x, y + 10, big ? 240 : 140, big ? 1.15 : 0.85, ember, 1);
+  if (big) kfxRing(x, y + 10, 170, 1.25, red, 1);
+  kfxBeam(x, y + 12, big ? 46 : 26, big ? 260 : 150, big ? 1.4 : 0.9, gold);
+  kfxPart(x, y, 0, 0, big ? 0.6 : 0.4, 'glow', [255, 236, 170], big ? 190 : 100);
+  const n = big ? 90 : 40;
+  for (let i = 0; i < n; i++) {
+    const a = vrng() * TAU, v = vrng.range(60, big ? 260 : 170);
+    kfxPart(x, y, Math.cos(a) * v, Math.sin(a) * v * 0.75 - 40, vrng.range(0.5, big ? 1.3 : 0.9), i % 4 ? 'spark' : 'px2', i % 3 === 0 ? white : i % 3 === 1 ? gold : ember, 1, 110);
+  }
+  // 立ちのぼる魂の粒
+  for (let i = 0; i < (big ? 30 : 14); i++) kfxPart(x + vrng.range(-20, 20), y + vrng.range(-6, 10), vrng.range(-8, 8), -vrng.range(30, big ? 110 : 70), vrng.range(0.9, big ? 1.9 : 1.3), 'px', [150, 255, 190], 1, 0);
+}
+
+// 大ボスの体が光って弾ける（p：0→1 で激しく）
+function kfxPop(x, y, p) {
+  kfxPart(x, y, 0, 0, 0.22, 'glow', [255, 240, 200], 26 + 30 * p);
+  kfxRing(x, y, 110 + 90 * p, 0.32, [255, 220, 140], 1);
+  for (let i = 0; i < 10; i++) {
+    const a = vrng() * TAU, v = vrng.range(40, 120);
+    kfxPart(x, y, Math.cos(a) * v, Math.sin(a) * v - 20, vrng.range(0.25, 0.5), 'spark', i % 2 ? [255, 250, 220] : [255, 170, 80], 1, 60);
+  }
+  sfx('kfxPop', p);
+  G.shake = Math.max(G.shake, 2 + 4 * p);
+}
+
+function kfxStepParts(rdt) {
+  const K = G.kfx;
+  for (const f of K.parts) {
+    f.life -= rdt;
+    f.x += f.vx * rdt; f.y += f.vy * rdt;
+    f.vy += f.grav * rdt;
+    const d = Math.pow(0.12, rdt); f.vx *= d; f.vy *= d;
+  }
+  for (const r of K.rings) { r.life -= rdt; r.r += r.vr * rdt * (0.35 + 0.65 * r.life / r.max); }
+  for (const b of K.beams) b.life -= rdt;
+  compact(K.parts, hasLife); compact(K.rings, hasLife); compact(K.beams, hasLife);
+}
+
+// ---- 描く ----
+// 大ボスの光る体（ふつうの重ね方で、人や物と同じ段に）
+function drawKillGhost() {
+  const s = G.kfx && G.kfx.seq;
+  if (!s || !s.ghost || s.boomed) return;
+  const g = s.ghost;
+  const T = KFX_T[3];
+  const p = clamp(s.t / T.boom, 0, 1);
+  const amp = 0.5 + 2.5 * p;
+  const jx = Math.round((vrng() - 0.5) * 2 * amp), jy = Math.round((vrng() - 0.5) * amp);
+  const pulse = 0.5 + 0.5 * Math.sin(s.t * (10 + 40 * p));
+  const sc = g.scale * (1 + 0.08 * p);
+  const glow = rgba32(255, 230, 160, 255);
+  for (const [ox, oy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) drawSprite(g.spr, 0, s.x + jx + ox, s.y + jy + oy, g.flip, rgba32(255, 255, 255, 220), glow, sc);
+  drawSprite(g.spr, 0, s.x + jx, s.y + jy, g.flip, WHITE32, rgba32(255, 255, 240, Math.round(60 + 190 * Math.max(p, pulse * (0.4 + 0.6 * p)))), sc);
+}
+
+// 光の粒・輪・柱（足し合わせて光らせる段で）
+function drawKillFxAdd() {
+  const K = G.kfx;
+  if (!K) return;
+  for (const b of K.beams) {
+    const a = b.life / b.max, w = b.w * (0.4 + 0.6 * a);
+    drawSpriteSized('glow', b.x, b.y - b.h / 2, w, b.h, rgba32(b.rgb[0], b.rgb[1], b.rgb[2], Math.round(200 * a)));
+    drawSpriteSized('glow', b.x, b.y - b.h / 2, w * 0.35, b.h, rgba32(255, 255, 240, Math.round(230 * a)));
+  }
+  for (const r of K.rings) {
+    const a = Math.round(255 * Math.min(1, r.life / r.max * 1.4));
+    const c = rgba32(r.rgb[0], r.rgb[1], r.rgb[2], a);
+    drawDotCircle(r.x, r.y, r.r, c);
+    if (r.w > 1) drawDotCircle(r.x, r.y, r.r - 2, c);
+  }
+  for (const f of K.parts) {
+    if (!inView(f.x, f.y, 100)) continue;
+    const a = Math.round(255 * Math.min(1, f.life / f.max * 1.6));
+    const c = rgba32(f.rgb[0], f.rgb[1], f.rgb[2], a);
+    if (f.spr === 'glow') { const k = 0.6 + 0.4 * f.life / f.max; drawSpriteSized('glow', f.x, f.y, f.sz * k, f.sz * k * 0.8, c); }
+    else drawSprite(f.spr, 0, f.x, f.y, false, c, 0, f.sz);
+  }
+  // 大ボス：力が溜まるにつれ、体の真ん中に光が集まる
+  const s = K.seq;
+  if (s && s.tier === 3 && s.ghost && !s.boomed) {
+    const p = clamp(s.t / KFX_T[3].boom, 0, 1);
+    const h = s.ghost.h;
+    drawSpriteSized('glow', s.x, s.y - h * 0.45, 30 + 110 * p * p, (30 + 110 * p * p) * 0.8, rgba32(255, 236, 170, Math.round(60 + 150 * p)));
+    if (p > 0.4) drawSpriteSized('glow', s.x, s.y - 80, 10 + 30 * p, 200, rgba32(255, 240, 200, Math.round(160 * (p - 0.4) / 0.6)));
+  }
+}
+
+// ---- 画面の上の層（白い光り・暗くなる縁・黒い帯）。ゲームが止まっていても呼ばれる ----
+const KFX = {
+  fl: 0, flMax: 1, flCol: 'white', black: 0,
+  flash(v, col) { KFX.fl = Math.max(KFX.fl, v); KFX.flCol = col; },
+  frame(dt, playing) {
+    const fe = document.getElementById('kfxflash'), de = document.getElementById('kfxdark');
+    if (!fe || !de) return;
+    // 光りは止めている間も消えていく（一時停止の後ろが真っ白のままにならないように）
+    KFX.fl = G ? Math.max(0, KFX.fl - dt * 2.6) : 0;
+    let lk = G ? killFxLook() : { dark: 0, bars: 0 };
+    const tl = G ? triumphLook() : null;
+    if (tl) lk = tl;
+    // 黒い幕（凱旋の暗転）：結果の画面に移ったあとは、少しずつほどく
+    if (tl) KFX.black = tl.black;
+    else if (KFX.black > 0) KFX.black = Math.max(0, KFX.black - dt * 1.8);
+    const be = document.getElementById('kfxblack');
+    if (be) { const bo = KFX.black > 0.004 ? KFX.black.toFixed(3) : '0'; if (be.style.opacity !== bo) be.style.opacity = bo; }
+    const fo = KFX.fl > 0.004 ? KFX.fl.toFixed(3) : '0';
+    if (fe.style.opacity !== fo) fe.style.opacity = fo;
+    const cl = KFX.flCol === 'gold' ? 'gold' : '';
+    if (fe.className !== cl) fe.className = cl;
+    const dk = lk.dark > 0.004 ? lk.dark.toFixed(3) : '0';
+    if (de.style.opacity !== dk) de.style.opacity = dk;
+    const bh = lk.bars > 0.004 ? (lk.bars * 9).toFixed(2) + 'vh' : '0px';
+    if (KFX.bh !== bh) { KFX.bh = bh; document.documentElement.style.setProperty('--kfxbar', bh); }
+    if (playing) UI.playClock = (UI.playClock || 0) + dt;   // 遊んでいる間だけ進む時計（体力の欄の「討伐」の長さ）
+    UI.killCardFrame(dt, playing || !!(G && G.state === 'triumph'));
+  },
+};
+
+// =========================================================
+// 凱旋：「凱旋する」を確定したときの締めくくり（約4.5秒。画面を押すと飛ばせる）
+//   戦場の時間が止まり → 残った敵があなたを中心に広がる波で灰になって消え → 軍勢から魂が立ちのぼり、
+//   光の柱と「凱旋」の札 → 暗転して結果の画面へ
+// この間は G.state = 'triumph'（戦いは進まない。演出だけ triumphTick で動かす）
+// =========================================================
+const TRI_T = { wave: 1.5, card: 1.1, cardDur: 3.4, fade: 3.7, end: 4.5, skip: 0.9 };
+
+function triumphStart() {
+  if (!G || G.state !== 'play' || !G.victory) return;
+  if (G.kfx && G.kfx.seq) killFxFinish(true);
+  UI.killCardClear();
+  G.state = 'triumph';
+  const N = G.necro;
+  const foes = G.units.filter((u) => u.team === ENEMY && !u.dead).map((u) => ({ u, d: Math.sqrt(dist2(u.x, u.y, N.x, N.y)) }));
+  foes.sort((a, b) => a.d - b.d);
+  G.tri = { t: 0, foes, fi: 0, maxD: foes.length ? foes[foes.length - 1].d : 0, fade: 0, soulT: 0, done: false };
+  // 敵の飛び道具・予告は消す
+  G.projs.length = 0;
+  for (const t of G.teles) if (t.team === ENEMY) t.dead = true;
+  for (const z of G.zones) if (z.team === ENEMY) z.dead = true;
+  N.chant = null;
+  UI.releaseJoy();
+  document.body.classList.add('triumph');
+  KFX.flash(0.55, 'gold');
+  BGM.duck = 1;
+  sfx('triumph');
+  G.shake = 0;
+  kfxState();
+  kfxRing(N.x, N.y + 4, 260, 1.1, [140, 255, 180], 2);
+  kfxRing(N.x, N.y + 4, 190, 1.3, [255, 220, 120], 1);
+}
+
+// 毎フレーム（16_main.js の frame から、G.state が 'triumph' の間）
+function triumphTick(dt) {
+  const T = G.tri;
+  if (!T || T.done) return;
+  T.t += dt;
+  kfxStepParts(dt);
+  const N = G.necro;
+  // 1. 灰になる波：あなたから外へ（画面の外の敵も最後にまとめて消える）
+  const r = (T.t / TRI_T.wave) * Math.max(260, T.maxD + 10);
+  while (T.fi < T.foes.length && (T.foes[T.fi].d <= r || T.t >= TRI_T.wave)) {
+    const u = T.foes[T.fi++].u;
+    if (u.dead) continue;
+    u.dead = true;
+    if (inView(u.x, u.y, 30)) {
+      const h = kfxBodyH(u);
+      for (let i = 0; i < (u.big ? 14 : 6); i++) kfxPart(u.x + vrng.range(-5, 5), u.y - vrng.range(0, h), vrng.range(-20, 20), -vrng.range(20, 60), vrng.range(0.5, 1.0), 'px2', i % 3 ? [70, 50, 90] : [190, 140, 255], 1, -10);
+      if (u.big) kfxPart(u.x, u.y - h * 0.5, 0, 0, 0.35, 'glow', [200, 160, 255], 40);
+      sfx('soul');
+    }
+  }
+  // 2. 光の柱（あなたの所）と、軍勢から立ちのぼる魂
+  if (T.t >= 0.3 && !T.beam) { T.beam = true; kfxBeam(N.x, N.y + 6, 40, 300, 3.4, [150, 255, 190]); kfxBeam(N.x, N.y + 6, 22, 300, 3.4, [255, 230, 150]); }
+  if (T.t >= 0.4 && T.t < 3.2) {
+    T.soulT -= dt;
+    if (T.soulT <= 0) {
+      T.soulT = 0.03;
+      const allies = G.units.filter((u) => u.team === ALLY && !u.dead && inView(u.x, u.y, 10));
+      for (let i = 0; i < Math.min(4, allies.length); i++) {
+        const u = allies[Math.floor(vrng() * allies.length)];
+        kfxPart(u.x + vrng.range(-3, 3), u.y - vrng.range(4, 12), vrng.range(-6, 6), -vrng.range(40, 90), vrng.range(0.9, 1.5), vrng() < 0.7 ? 'px' : 'spark', vrng() < 0.75 ? [140, 255, 180] : [255, 225, 130], 1, -15);
+      }
+      kfxPart(N.x + vrng.range(-10, 10), N.y - vrng.range(0, 10), vrng.range(-10, 10), -vrng.range(60, 130), vrng.range(0.8, 1.4), 'spark', [255, 240, 190], 1, -20);
+    }
+  }
+  if (T.t >= TRI_T.card && !T.carded) {
+    T.carded = true;
+    UI.killCard({ tier: 'tr', dur: TRI_T.cardDur, label: STAGES[G.stage].name, name: LX('凱旋'), sub: LT`${fmtTime(G.t)} を戦い抜いた` });
+  }
+  // 3. 暗転して結果へ
+  if (T.t >= TRI_T.fade) T.fade = clamp((T.t - TRI_T.fade) / (TRI_T.end - TRI_T.fade), 0, 1);
+  if (T.t >= TRI_T.end) triumphEnd();
+}
+
+function triumphSkip() {
+  const T = G && G.tri;
+  if (!T || T.done || T.t < TRI_T.skip) return;
+  if (T.t < TRI_T.fade) T.t = TRI_T.fade;   // 飛ばすときも暗転だけは見せる
+}
+
+function triumphEnd() {
+  const T = G.tri;
+  if (!T || T.done) return;
+  T.done = true;
+  BGM.duck = 0;
+  document.body.classList.remove('triumph');
+  UI.killCardClear();
+  G.state = 'play';   // endRun は遊んでいる状態から結果へ移す
+  endRun();
+  KFX.black = 1;      // 結果の画面の後ろで、暗転をほどく
+}
+
+// 凱旋の間の見た目（KFX.frame から）
+function triumphLook() {
+  const T = G && G.tri;
+  if (!T || T.done) return null;
+  return { dark: 0.35 * clamp(T.t / 0.5, 0, 1), bars: clamp(T.t / 0.5, 0, 1), black: T.fade };
 }
 
 // ==== 09_necro.js ====
@@ -11964,13 +12514,20 @@ function growText(gr) {
 
 // 煮込み時間：基本4.5秒＋サブ1体ごとに0.35秒＋★が1つ上がるごとに1.2秒
 // 完成するLvがあなたのLvより高いと、その差1につき ×SIMMER_GAP（1.08）ずつ長くなる（差だけで決まる。どのLv帯でも同じ差なら同じだけ待つ）
+// ただし差が SIMMER_KNEE（15）を超えた分は、1につき +2% だけ（ゆるやかに）長くなる
+//   ボスの亡骸はあなたの約2倍のLvなので、そのままの伸び方だとボスを核にした合成が10分以上かかっていた（v69 で直した）
+//   例：差15 → ×3.2、差35 → ×4.4、差55 → ×5.7（黒竜にサブ8体でも1分ほど）
 // 術式「境界の超越」でこの伸びを小さくできる。煮込み中にレベルが上がると、残り時間も縮む
 // （煮込み中の窯は敵に狙われる。強い合成ほど長く守る必要がある）
-const SIMMER_GAP = 1.08;
+const SIMMER_GAP = 1.08, SIMMER_KNEE = 15, SIMMER_OVER = 0.02;
+function simmerGapRaw(gap) {
+  if (gap <= 0) return 1;
+  return Math.pow(SIMMER_GAP, Math.min(gap, SIMMER_KNEE)) * (1 + SIMMER_OVER * Math.max(0, gap - SIMMER_KNEE));
+}
 // 境界の超越があれば、格上の合成は速く煮える（この倍率に含めて、理由の表示にも出す）
 function simmerGapMul(outG, lv) {
   const gap = Math.max(0, outG - Math.max(1, lv));
-  return gap > 0 ? Math.pow(SIMMER_GAP, gap) / (1 + (G.mods ? G.mods.transcend || 0 : 0)) : 1;
+  return gap > 0 ? simmerGapRaw(gap) / (1 + (G.mods ? G.mods.transcend || 0 : 0)) : 1;
 }
 function simmerTime(outG, lv, nSub, rank) {
   const base = 4.5 + 0.35 * (nSub || 0) + 1.2 * Math.max(0, (rank || 1) - 1);
@@ -12996,6 +13553,9 @@ function relocateFar() {
 function update(dt) {
   if (G.state !== 'play') return;
   const t0 = performance.now();
+  // ボスを倒したときの演出（08_bossfx.js）：その間だけゲームの時間がゆっくり進む。rdt は実際の時間
+  const rdt = dt;
+  dt *= killFxTick(rdt);
   G.t += dt;
   // グリッドの再構築
   G.tgrid[0].clear(); G.tgrid[1].clear(); G.sgrid.clear();
@@ -13029,9 +13589,9 @@ function update(dt) {
   if (Math.floor(G.t * 2) !== Math.floor((G.t - dt) * 2)) relocateFar();
   compact(G.units, notDead);
   crumbleExcess(dt);
-  if (G.shake > 0) G.shake = Math.max(0, G.shake - dt * 12);
+  if (G.shake > 0) G.shake = Math.max(0, G.shake - rdt * 12);
   if (G.ending > 0) { G.ending -= dt; if (G.ending <= 0) endRun(); }
-  if (G.pendingLv > 0 && G.state === 'play' && !G.necro.dead) UI.openLevelUp();
+  if (G.pendingLv > 0 && G.state === 'play' && !G.necro.dead && !killFxHold()) UI.openLevelUp();
   G.perf.upd = G.perf.upd * 0.95 + (performance.now() - t0) * 0.05;
 }
 
@@ -13087,8 +13647,12 @@ function render() {
   const N = G.necro;
   let sx = 0, sy = 0;
   if (G.shake > 0 && META.settings.shake) { sx = (vrng() - 0.5) * G.shake * 2; sy = (vrng() - 0.5) * G.shake * 2; }
-  R.camX = Math.round(clamp(N.x - R.W / 2, -40, MAP - R.W + 40) + sx);
-  R.camY = Math.round(clamp(N.y - R.H / 2 - 6, -40, MAP - R.H + 40) + sy);
+  // 大ボスを倒した演出の間は、カメラが倒れた所へ寄る
+  let fx = N.x, fy = N.y;
+  const kc = killFxCam();
+  if (kc && kc.k > 0) { fx = lerp(N.x, kc.x, kc.k); fy = lerp(N.y, kc.y, kc.k); }
+  R.camX = Math.round(clamp(fx - R.W / 2, -40, MAP - R.W + 40) + sx);
+  R.camY = Math.round(clamp(fy - R.H / 2 - 6, -40, MAP - R.H + 40) + sy);
   const bg = G.stage === 'holy' ? [0.12, 0.12, 0.14] : [0.09, 0.11, 0.08];
   beginFrame(bg[0], bg[1], bg[2]);
   drawGround();
@@ -13103,6 +13667,7 @@ function render() {
   drawKingAura();
   drawRaiseCircle(false);
   drawSorted();
+  drawKillGhost();
   drawFlyers();
   drawRaiseCircle(true);
   drawNecroTop();
@@ -13111,6 +13676,7 @@ function render() {
   setBlend(1);
   drawFxList(G.fxAdd, 1);
   drawSoulGlow();
+  drawKillFxAdd();
   setBlend(0);
   drawSouls();
   drawPickups();
@@ -13272,7 +13838,7 @@ function drawCorpses() {
   const chantSet = N.chant ? new Set(N.chant.list) : null;
   const pulse = 0.5 + 0.5 * Math.sin(G.t * 8);
   for (const c of G.corpses) {
-    if (c.dead || !inView(c.x, c.y, 30)) continue;
+    if (c.dead || c.kfxHide || !inView(c.x, c.y, 30)) continue;
     let mul = WHITE32, add = 0;
     let a = 255;
     if (c.decay !== Infinity && c.decay < 6) a = Math.round(255 * Math.max(0.25, c.decay / 6));
@@ -13373,7 +13939,7 @@ function drawSiteMarks() {
     drawSprite('sitemark', 0, u.x, top, false, rgba32(255, 160, 60, 255), 0, 1);
   }
   for (const c of G.corpses) {
-    if (c.dead || !(c.boss || c.mid) || !inView(c.x, c.y, 20)) continue;
+    if (c.dead || c.kfxHide || !(c.boss || c.mid) || !inView(c.x, c.y, 20)) continue;
     drawSprite('sitemark', 0, c.x, c.y - 14 - bob, false, c.boss ? rgba32(255, 225, 90, 255) : rgba32(255, 175, 80, 255), 0, c.boss ? 1.3 : 1);
   }
   for (const s of G.sites) {
@@ -13469,6 +14035,7 @@ function drawUnit(u) {
   let add = 0, a = 255;
   if (u.flash > 0) add = u.isBoss || u.huge ? rgba32(255, 255, 255, 70) : rgba32(255, 255, 255, 200);
   else if (u.buffT > 0) add = rgba32(255, 80, 60, 70);
+  if (G.state === 'triumph' && u.team === ALLY) add = rgba32(170, 255, 200, Math.round(40 + 50 * (0.5 + 0.5 * Math.sin(G.tri.t * 6 + u.id))));   // 凱旋：軍勢が光る
   else if (u.plagueT > 0) add = rgba32(150, 255, 60, 70);
   else if (u.slowT > 0 && u.team === ENEMY) add = rgba32(170, 90, 255, 60);
   if (u.life > 0 && u.life < 3) a = Math.round(255 * (0.3 + 0.7 * u.life / 3));
@@ -13855,11 +14422,14 @@ UI.init = function () {
   $('siteprompt').addEventListener('pointerdown', (e) => { e.stopPropagation(); });
   $('siteprompt').addEventListener('click', (e) => { e.stopPropagation(); audioInit(); if (G && G.state === 'play' && nearSite() && potUI() !== 'D') UI.openPot(); });
   $('potbtn').addEventListener('click', () => { audioInit(); if (performance.now() - (UI.potDragged || 0) < 700) return; if (G && G.state === 'play') UI.openPot(); });
+  // 凱旋の締めくくりは、画面を押すかキーで飛ばせる
+  document.addEventListener('pointerdown', () => { if (G && G.state === 'triumph') triumphSkip(); }, true);
+  document.addEventListener('keydown', () => { if (G && G.state === 'triumph') triumphSkip(); }, true);
   // 凱旋：誤タップで終わらないよう二度押しで確定する
   $('returnbtn').addEventListener('click', () => {
     if (!G || !G.victory || G.state !== 'play') return;
     const b = $('returnbtn');
-    if (b.dataset.armed) { endRun(); return; }
+    if (b.dataset.armed) { triumphStart(); return; }   // 凱旋の締めくくり（08_bossfx.js）→ 結果の画面
     b.dataset.armed = '1'; b.textContent = ctl('returnArmed');
     clearTimeout(UI.retT);
     UI.retT = setTimeout(() => { delete b.dataset.armed; b.textContent = ctl('returnBtn'); }, 3000);
@@ -14039,6 +14609,8 @@ UI.enterGame = function () {
   $('returnbtn').classList.add('hidden');
   $('banners').innerHTML = '';
   $('bossbars').innerHTML = '';
+  UI.slain = [];
+  UI.killCardClear();
   UI.hints = {};
   UI.hintT = 0;
   UI.hintCtl('hintStart', 'start', 9);
@@ -14097,7 +14669,11 @@ UI.updateHud = function (dt) {
   const bb = $('bossbars');
   const bosses = G.bossAlive.filter((b) => !b.dead).concat(G.midAlive.filter((b) => !b.dead));
   const gc = G.godCorpse && !G.godCorpse.dead ? G.godCorpse : null;
-  const sig = (gc ? 'R,' : '') + bosses.map((b) => b.id).join(',');
+  // 倒したばかりのボスは、少しの間「討伐」と出してから消す（いきなり消えて分かりにくくならないように）
+  const now = UI.playClock || 0;
+  if (UI.slain && UI.slain.length) UI.slain = UI.slain.filter((x) => x.until > now);
+  const slain = UI.slain || [];
+  const sig = (gc ? 'R,' : '') + bosses.map((b) => b.id).join(',') + '|' + slain.map((x) => x.id).join(',');
   const bossChanged = UI.bossSig !== sig;
   if (bossChanged) {
     UI.bossSig = sig;
@@ -14105,6 +14681,7 @@ UI.updateHud = function (dt) {
     // 神の屍のネクロマンス（いちばん上に）
     if (gc) bb.appendChild(el('div', 'bossbar ritual', LX('<div class="nm"><span>神の屍をネクロマンス</span><span class="rt"></span></div><div class="bar"><i></i></div>')));
     for (const b of bosses) bb.appendChild(el('div', 'bossbar' + (b.mid ? ' mid' : ''), `<div class="nm"><span>${b.mid ? LT`中ボス ${MIDBOSS[b.type].name}` : BOSSES[b.type].name}</span><span>Lv ${b.g}</span></div><div class="bar"><i></i></div>`));
+    for (const x of slain) bb.appendChild(el('div', 'bossbar slain' + (x.mid ? ' mid' : ''), `<div class="nm"><span>${x.mid ? LT`中ボス ${x.name}` : x.name}</span><span class="kc">${LX('討伐')}</span></div><div class="bar"><i></i></div>`));
   }
   // 上の表示を縦に積む：カウントダウン → 猛攻の札 → ボスの体力 → バナー（重ならないように）
   // 位置を測る（レイアウトの読み出し）のは、中身か画面の大きさが変わったときだけ
@@ -14129,7 +14706,7 @@ UI.updateHud = function (dt) {
   const bc = [];
   if (G.bossCorpses && G.bossCorpses.length) {
     G.bossCorpses = G.bossCorpses.filter((c) => !c.dead && c.decay > 0);
-    for (const c of G.bossCorpses) bc.push({ x: c.x, y: c.y + 8, label: LT`${c.bossName}の亡骸`, cls: 'corpse' + (c.mid ? ' mid' : ''), spawnT: c.t0 });
+    for (const c of G.bossCorpses) if (!c.kfxHide) bc.push({ x: c.x, y: c.y + 8, label: LT`${c.bossName}の亡骸`, cls: 'corpse' + (c.mid ? ' mid' : ''), spawnT: c.t0 });
   }
   UI.updateEdgeInds((gc ? [{ x: gc.x, y: gc.y, label: LX('神の屍'), cls: 'ritual', spawnT: G.godCorpseT }] : []).concat(bosses, bc));
   bosses.forEach((b, i) => { const n = bb.children[i + (gc ? 1 : 0)]; if (n) hudStyle(n.querySelector('i'), 'width', Math.round(200 * b.hp / b.mhp) / 2 + '%'); });
@@ -14242,10 +14819,60 @@ UI.hint = function (text, key, dur) {
 UI.banner = function (text, sub, kind) {
   const b = $('banners');
   if (!b) return;
+  // 討伐の札が出ている間の知らせは、札が消えてから出す（重ならないように）
+  if (UI.kc) { (UI.bannerQ = UI.bannerQ || []).push([text, sub, kind]); return; }
   const n = el('div', 'banner ' + (kind || 'info'), `<div class="t">${text}</div>${sub ? `<div class="s">${sub}</div>` : ''}`);
   b.appendChild(n);
   while (b.childElementCount > 2) b.removeChild(b.firstChild);
   setTimeout(() => { if (n.parentNode) n.parentNode.removeChild(n); }, 2900);
+};
+
+// ---- ボス・中ボスを倒したとき（08_bossfx.js から） ----
+// 体力の欄：少しの間「討伐」と光らせてから消す
+UI.slainBar = function (u, name, tier) {
+  UI.slain = (UI.slain || []).filter((x) => x.id !== u.id);
+  UI.slain.push({ id: u.id, name, mid: !!u.mid, until: (UI.playClock || 0) + (tier === 1 ? 1.4 : tier === 2 ? 2.4 : 3.6) });
+};
+// 画面の中央の「ボス討伐」「大ボス討伐」の札
+UI.killCard = function (s) {
+  const k = $('killcard');
+  if (!k) return;
+  k.innerHTML = `<div class="kc-in"><div class="kc-l"><i></i><span>${s.label}</span><i></i></div><div class="kc-n">${s.name}</div>${s.sub ? `<div class="kc-s">${s.sub}</div>` : ''}</div>`;
+  k.className = '';
+  void k.offsetWidth;
+  k.className = 'on t' + s.tier;
+  k._hc = {};
+  $('banners').classList.add('kchide');
+  UI.kc = { t: 0, dur: s.dur || KFX_T[s.tier].cardDur, out: false };
+};
+// 札を出すことが決まった時点で、知らせを待たせ始める（大ボスは札が出るまで2秒あるので、その間の知らせも札の後へ）
+UI.killCardReserve = function () {
+  if (!UI.kc) UI.kc = { t: 0, dur: 1e9, out: true, reserve: true };
+  $('banners').classList.add('kchide');
+};
+UI.killCardClear = function () {
+  const k = $('killcard');
+  if (k) { k.className = ''; k.innerHTML = ''; k._hc = {}; }
+  const had = !!UI.kc;
+  UI.kc = null;
+  const b = $('banners');
+  if (b) b.classList.remove('kchide');
+  // 待たせていた知らせ（新しい敵の解放など）を出す。遊んでいない（結果・タイトル）なら捨てる
+  const q = UI.bannerQ || [];
+  UI.bannerQ = [];
+  if (had && G && G.state !== 'result') for (const a of q.slice(-2)) UI.banner(a[0], a[1], a[2]);
+};
+// 毎フレーム：遊んでいる間だけ時間を進める（一時停止・レベルアップの間は札の動きも止める）
+UI.killCardFrame = function (dt, playing) {
+  const c = UI.kc;
+  if (!c) return;
+  if (!G) { UI.killCardClear(); return; }
+  const k = $('killcard');
+  hudClass(k, 'paused', !playing);
+  if (!playing) return;
+  c.t += dt;
+  if (!c.out && c.t >= c.dur - 0.4) { c.out = true; k.classList.add('out'); }
+  if (c.t >= c.dur) UI.killCardClear();
 };
 
 UI.showReturn = function (on) { const b = $('returnbtn'); b.classList.toggle('hidden', !on); delete b.dataset.armed; b.textContent = ctl('returnBtn'); };
@@ -15404,6 +16031,7 @@ function unlockInfo(u) {
 
 UI.showResult = function (res) {
   $('hud').classList.add('hidden');
+  UI.killCardClear();
   UI.releaseJoy();
   const s = $('result');
   s.innerHTML = '';
@@ -16905,6 +17533,7 @@ function lvfxLand(card, r, col, kind) {
   ring.style.borderColor = col; ring.style.color = col;
   const a = ring.animate([{ transform: 'scale(1)', opacity: 0.95 }, { transform: 'scale(1.07,1.12)', opacity: 0 }], { duration: kind === 'evo' ? 620 : 420, easing: 'ease-out' });
   a.onfinish = () => ring.remove();
+  if (!(r.width > 0 && r.height > 0)) return;   // まだ並んでいない札（すぐ選ばれたとき）は粒を出さない
   const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
   const n = lvfxN(kind === 'evo' ? 26 : 12);
   for (let i = 0; i < n; i++) {
@@ -17441,11 +18070,15 @@ function frame(ts) {
       PERF.updCost = PERF.updCost * 0.9 + (performance.now() - a) / steps * 0.1;
       if (watch) perfWatch(dt);   // 重さの見張り（速さを変えている間は、重さで描画を軽くしない）
     }
+    // 凱旋の締めくくり（08_bossfx.js）：戦いは止めたまま演出だけ進める
+    const tri = !!(G && G.state === 'triumph');
+    if (tri) triumphTick(dt);
     // 止まっている画面（一時停止・レベルアップ・錬金窯・結果など）では、後ろの戦場はほとんど変わらないので描き直しを減らす
     const st = G ? G.state : 'title';
-    if (playing || !G || st !== lastState || ts - lastMenuDraw > 250) { render(); lastMenuDraw = ts; }
+    if (playing || tri || !G || st !== lastState || ts - lastMenuDraw > 250) { render(); lastMenuDraw = ts; }
     lastState = st;
     UI.updateHud(dt);
+    KFX.frame(dt, !!(G && G.state === 'play'));
   } catch (e) {
     showError(e);
     console.error(e);
